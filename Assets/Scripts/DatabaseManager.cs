@@ -1,44 +1,38 @@
 using UnityEngine;
+using System;
 using System.IO;
-using SQLite4Unity3d;
 
 public class DatabaseManager : MonoBehaviour
 {
-    private SQLiteConnection _connection;
-
-    void Awake()
+    [System.Serializable]
+    public class AnswerEntry
     {
-        string dbPath = Path.Combine(Application.persistentDataPath, "playerdata.db");
-
-        _connection = new SQLiteConnection(dbPath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-        _connection.CreateTable<PlayerInfo>();
-        _connection.CreateTable<PlayerDecision>();
-        Debug.Log("Database initialized at: " + dbPath);
+        public int questionId;
+        public string response;
     }
 
-    public void SavePlayerInfo(string playerName, int age)
+    [System.Serializable]
+    public class SurveyResponse
     {
-        _connection.Insert(new PlayerInfo { Name = playerName, Age = age });
+        public string playerId;
+        public string timestamp;
+        public AnswerEntry[] answers;
     }
 
-    public void SaveDecision(string question, string answer)
+    public void SaveSurveyResponse(string playerId, AnswerEntry[] answers)
     {
-        _connection.Insert(new PlayerDecision { Question = question, Answer = answer });
-    }
+        SurveyResponse response = new SurveyResponse
+        {
+            playerId = playerId,
+            timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            answers = answers
+        };
 
-    public class PlayerInfo
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Age { get; set; }
-    }
+        string json = JsonUtility.ToJson(response, true);
+        string filename = $"survey_{playerId}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json";
+        string path = Path.Combine(Application.persistentDataPath, filename);
 
-    public class PlayerDecision
-    {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
-        public string Question { get; set; }
-        public string Answer { get; set; }
+        File.WriteAllText(path, json);
+        Debug.Log("✅ Survey saved to: " + path);
     }
 }
