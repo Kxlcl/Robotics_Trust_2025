@@ -1,8 +1,17 @@
-using UnityEngine;
+using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "SurveyData", menuName = "Survey/Question Set")]
-public class SurveyData : ScriptableObject
+[System.Serializable]
+public class SurveyData
 {
-    [TextArea(2, 5)]
-    public string[] questions;
+    public List<Question> questions;
+}
+
+[System.Serializable]
+public class Question
+{
+    public int id;
+    public string text;
+    public string section;
+    public string type;
+    public List<string> options;
 }
