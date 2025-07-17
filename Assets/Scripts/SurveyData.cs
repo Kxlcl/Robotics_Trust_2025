@@ -1,12 +1,13 @@
+using System;
 using System.Collections.Generic;
 
-[System.Serializable]
+[Serializable]
 public class SurveyData
 {
     public List<Question> questions;
 }
 
-[System.Serializable]
+[Serializable]
 public class Question
 {
     public int id;
@@ -14,4 +15,18 @@ public class Question
     public string section;
     public string type;
     public List<string> options;
+}
+
+[Serializable]
+public class PlayerAnswer
+{
+    public int questionId;
+    public string response;
+}
+
+[Serializable]
+public class PlayerResponse
+{
+    public string playerId;
+    public List<PlayerAnswer> answers;
 }
