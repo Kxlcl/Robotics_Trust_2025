@@ -87,13 +87,33 @@ public class SurveyUI : MonoBehaviour
 
 
     public void NextQuestion()
+{
+    Debug.Log($"[NextQuestion] Called at index: {currentQuestionIndex}");
+
+    if (surveyData == null)
     {
-        if (currentQuestionIndex < surveyData.questions.Count - 1)
-        {
-            currentQuestionIndex++;
-            ShowQuestion(currentQuestionIndex);
-        }
+        Debug.LogError("[NextQuestion] surveyData is null!");
+        return;
     }
+
+    if (surveyData.questions == null)
+    {
+        Debug.LogError("[NextQuestion] surveyData.questions is null!");
+        return;
+    }
+
+    if (currentQuestionIndex < surveyData.questions.Count - 1)
+    {
+        currentQuestionIndex++;
+        Debug.Log($"[NextQuestion] Moving to index: {currentQuestionIndex}");
+        ShowQuestion(currentQuestionIndex);
+    }
+    else
+    {
+        Debug.LogWarning("[NextQuestion] Already at last question.");
+    }
+}
+
 
     public void PreviousQuestion()
     {
@@ -106,6 +126,27 @@ public class SurveyUI : MonoBehaviour
 
     public void SubmitResponses()
     {
+        Debug.Log("Submit button clicked");
+
+        if (answers == null || answers.Count == 0)
+        {
+            Debug.LogError("No answers to submit. Answer list is empty or null.");
+            return;
+        }
+
+        if (surveyData == null)
+        {
+            Debug.LogError("SurveyData is null. Cannot proceed with submission.");
+            return;
+        }
+
+        Debug.Log($"Preparing to submit {answers.Count} answers...");
+
+        for (int i = 0; i < answers.Count; i++)
+        {
+            Debug.Log($"Answer {i + 1}: QID = {answers[i].questionId}, Response = {answers[i].response}");
+        }
+
         PlayerResponse fullResponse = new PlayerResponse
         {
             playerId = "Player_" + System.DateTime.Now.Ticks,
@@ -113,9 +154,18 @@ public class SurveyUI : MonoBehaviour
         };
 
         string json = JsonUtility.ToJson(fullResponse, true);
-        string path = Path.Combine(Application.persistentDataPath, "player_response.json");
-        File.WriteAllText(path, json);
 
-        Debug.Log("Survey saved to: " + path);
+        string path = Path.Combine(Application.persistentDataPath, "player_response.json");
+        Debug.Log($"Saving response to: {path}");
+
+        try
+        {
+            File.WriteAllText(path, json);
+            Debug.Log("Survey successfully saved.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("Failed to write survey response to file: " + ex.Message);
+        }
     }
 }
