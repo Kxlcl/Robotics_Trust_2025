@@ -1,0 +1,14 @@
+{
+  "name": "robotics_trust_2025",
+  "version": "1.0.0",
+  "description": "Simple Node.js server to host Unity WebGL build",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
