@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -5,12 +6,17 @@ using System.Collections;
 public class DialogueManager : MonoBehaviour
 {
     public GameObject dialoguePanel;
-    public Text dialogueText;
+    public TMPro.TMP_Text dialogueText;
     public string[] dialogueLines;
     public float textSpeed = 0.05f;
 
     private int currentLine = 0;
     private Coroutine typingCoroutine;
+
+    void Start()
+    {
+        StartDialogue();
+    }
 
     public void StartDialogue()
     {
