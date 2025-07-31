@@ -1,0 +1,4 @@
+Welcome to the simulation.
+Your first task is to find the subway entrance.
+Remember to follow the safety instructions.
+Good luck!

@@ -7,14 +7,23 @@ public class DialogueManager : MonoBehaviour
 {
     public GameObject dialoguePanel;
     public TMPro.TMP_Text dialogueText;
-    public string[] dialogueLines;
+    public TextAsset dialogueScript;
     public float textSpeed = 0.05f;
 
+    private string[] dialogueLines;
     private int currentLine = 0;
     private Coroutine typingCoroutine;
 
     void Start()
     {
+        if (dialogueScript != null)
+        {
+            dialogueLines = dialogueScript.text.Split('\n');
+        }
+        else
+        {
+            dialogueLines = new string[] { "No dialogue script assigned." };
+        }
         StartDialogue();
     }
 
