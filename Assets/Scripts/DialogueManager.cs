@@ -16,6 +16,7 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 30;
         if (dialogueScript != null)
         {
             dialogueLines = dialogueScript.text.Split('\n');
