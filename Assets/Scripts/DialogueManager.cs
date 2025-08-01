@@ -5,6 +5,33 @@ using System.Collections;
 
 public class DialogueManager : MonoBehaviour
 {
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Re-load dialogue for the new scene
+        string sceneName = scene.name;
+        string dialogueFileName = sceneName + "Dialogue";
+        dialogueScript = Resources.Load<TextAsset>(dialogueFileName);
+        if (dialogueScript != null)
+        {
+            dialogueLines = dialogueScript.text.Split('\n');
+        }
+        else
+        {
+            dialogueLines = new string[] { "No dialogue script assigned." };
+        }
+        currentLine = 0;
+        StartDialogue();
+    }
     // ...existing code...
     public Button choiceButton1;
     public Button choiceButton2;
@@ -40,6 +67,10 @@ public class DialogueManager : MonoBehaviour
         choiceButton1.gameObject.SetActive(false);
         choiceButton2.gameObject.SetActive(false);
         Application.targetFrameRate = 30;
+        // Automatically load dialogue file based on scene name
+        string sceneName = SceneManager.GetActiveScene().name;
+        string dialogueFileName = sceneName + "Dialogue"; // e.g., SubwayDialogue, StationDialogue
+        dialogueScript = Resources.Load<TextAsset>(dialogueFileName);
         if (dialogueScript != null && (dialogueLines == null || dialogueLines.Length == 0))
         {
             dialogueLines = dialogueScript.text.Split('\n');
@@ -104,6 +135,11 @@ public class DialogueManager : MonoBehaviour
     void EndDialogue()
     {
         dialoguePanel.SetActive(false);
+        // If we're in the station scene, load the stairs scene next
+        if (SceneManager.GetActiveScene().name.ToLower() == "station")
+        {
+            SceneManager.LoadScene("stairs");
+        }
     }
 
     // Button handler for both choices

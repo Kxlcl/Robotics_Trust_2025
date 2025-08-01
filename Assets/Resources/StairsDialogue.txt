@@ -1,0 +1,4 @@
+All security checks are complete. You are now permitted to leave.
+
+
+You are officially terminated for being late too many times.
