@@ -18,13 +18,18 @@ public class DialogueManager : MonoBehaviour
     private int currentLine = 0;
     private Coroutine typingCoroutine;
 
+    void Awake()
+    {
+        // Only make the dialogue box and manager persistent
+        DontDestroyOnLoad(gameObject); // DialogueManager
+        if (dialoguePanel != null)
+        {
+            DontDestroyOnLoad(dialoguePanel); // Dialogue box
+        }
+    }
+
     void Start()
     {
-        Debug.Log($"choiceButton1: {choiceButton1}");
-        Debug.Log($"choiceButton2: {choiceButton2}");
-        Debug.Log($"dialoguePanel: {dialoguePanel}");
-        Debug.Log($"dialogueText: {dialogueText}");
-        Debug.Log($"dialogueScript: {dialogueScript}");
         choiceButton1.gameObject.SetActive(false);
         choiceButton2.gameObject.SetActive(false);
         Application.targetFrameRate = 30;

@@ -10,6 +10,7 @@ public class GlobalTimer : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         timeRemaining = initialTime;
     }
 
