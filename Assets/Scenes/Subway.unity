@@ -266,6 +266,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &208092170
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 225.17484
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.9999964
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 445.72678
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
+      propertyPath: m_Name
+      value: small_house_1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4a4197e7c33e5bf4984d931c8f992851, type: 3}
 --- !u!1 &260285335
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,8 +704,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   choiceButton1: {fileID: 839257328}
   choiceButton2: {fileID: 556579273}
-  linesBeforeChoices: 7
-  linesPerScene: 7
+  linesBeforeChoices: 17
+  linesPerScene: 17
   dialoguePanel: {fileID: 346663551}
   dialogueText: {fileID: 163757955}
   dialogueScript: {fileID: 4900000, guid: 1261a0a41703b4dc9bb7769c48228984, type: 3}
@@ -1473,8 +1542,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2053503216}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.05696724, y: 0.006896348, z: -0.00039264135, w: -0.99835217}
-  m_LocalPosition: {x: 403.53546, y: 250.13535, z: -382.34955}
+  m_LocalRotation: {x: 0.01590851, y: 0.7069345, z: 0.015909282, w: -0.7069211}
+  m_LocalPosition: {x: 278.71143, y: 26.904179, z: 476.13522}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1639,3 +1708,4 @@ SceneRoots:
   - {fileID: 646732111}
   - {fileID: 1019251540}
   - {fileID: 1342154180}
+  - {fileID: 208092170}
