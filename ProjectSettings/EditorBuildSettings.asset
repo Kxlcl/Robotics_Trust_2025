@@ -6,11 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menu Screen.unity
+    path: Assets/Scenes/Menu.unity
     guid: 2aedacb5f23c7418ea3f7287310a63df
   - enabled: 1
-    path: Assets/Scenes/Subway Scene.unity
+    path: Assets/Scenes/Subway.unity
     guid: 7390d8f65afba4f5691f8f021d203d2e
+  - enabled: 1
+    path: Assets/Scenes/Station.unity
+    guid: e543e428eb89a483b981b89c3170ec7d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

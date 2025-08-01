@@ -1,10 +1,14 @@
-
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class DialogueManager : MonoBehaviour
 {
+    // ...existing code...
+    public Button choiceButton1;
+    public Button choiceButton2;
+    public int linesBeforeChoices = 3; // Show buttons after 3 lines
     public GameObject dialoguePanel;
     public TMPro.TMP_Text dialogueText;
     public TextAsset dialogueScript;
@@ -16,6 +20,13 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
+        Debug.Log($"choiceButton1: {choiceButton1}");
+        Debug.Log($"choiceButton2: {choiceButton2}");
+        Debug.Log($"dialoguePanel: {dialoguePanel}");
+        Debug.Log($"dialogueText: {dialogueText}");
+        Debug.Log($"dialogueScript: {dialogueScript}");
+        choiceButton1.gameObject.SetActive(false);
+        choiceButton2.gameObject.SetActive(false);
         Application.targetFrameRate = 30;
         if (dialogueScript != null)
         {
@@ -32,6 +43,8 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(true);
         currentLine = 0;
+        if (choiceButton1 != null) choiceButton1.gameObject.SetActive(false);
+        if (choiceButton2 != null) choiceButton2.gameObject.SetActive(false);
         ShowLine();
     }
 
@@ -45,6 +58,11 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         currentLine++;
+        if (currentLine == linesBeforeChoices)
+        {
+            if (choiceButton1 != null) choiceButton1.gameObject.SetActive(true);
+            if (choiceButton2 != null) choiceButton2.gameObject.SetActive(true);
+        }
         if (currentLine < dialogueLines.Length)
         {
             ShowLine();
@@ -74,5 +92,11 @@ public class DialogueManager : MonoBehaviour
     void EndDialogue()
     {
         dialoguePanel.SetActive(false);
+    }
+
+    // Button handler for both choices
+    public void OnChoiceButtonClicked()
+    {
+        SceneManager.LoadScene("station");
     }
 }
