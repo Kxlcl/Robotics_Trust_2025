@@ -20,11 +20,17 @@ public class DialogueManager : MonoBehaviour
 
     void Awake()
     {
-        // Only make the dialogue box and manager persistent
+        // Make the dialogue manager and panel persistent
         DontDestroyOnLoad(gameObject); // DialogueManager
         if (dialoguePanel != null)
         {
             DontDestroyOnLoad(dialoguePanel); // Dialogue box
+        }
+        // Also make timer persistent if found
+        var timerObj = GameObject.Find("Timer");
+        if (timerObj != null)
+        {
+            DontDestroyOnLoad(timerObj);
         }
     }
 
@@ -33,11 +39,11 @@ public class DialogueManager : MonoBehaviour
         choiceButton1.gameObject.SetActive(false);
         choiceButton2.gameObject.SetActive(false);
         Application.targetFrameRate = 30;
-        if (dialogueScript != null)
+        if (dialogueScript != null && (dialogueLines == null || dialogueLines.Length == 0))
         {
             dialogueLines = dialogueScript.text.Split('\n');
         }
-        else
+        else if (dialogueLines == null || dialogueLines.Length == 0)
         {
             dialogueLines = new string[] { "No dialogue script assigned." };
         }
@@ -47,7 +53,8 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogue()
     {
         dialoguePanel.SetActive(true);
-        currentLine = 0;
+        // Do NOT reset currentLine here; only set active and show current line
+        // currentLine = 0; // Commenting this line out to prevent resetting
         if (choiceButton1 != null) choiceButton1.gameObject.SetActive(false);
         if (choiceButton2 != null) choiceButton2.gameObject.SetActive(false);
         ShowLine();
