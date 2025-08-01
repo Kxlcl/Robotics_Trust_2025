@@ -613,6 +613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 646732111}
   - component: {fileID: 646732110}
+  - component: {fileID: 646732112}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -634,11 +635,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   choiceButton1: {fileID: 839257328}
   choiceButton2: {fileID: 556579273}
-  linesBeforeChoices: 3
+  linesBeforeChoices: 7
+  linesPerScene: 7
   dialoguePanel: {fileID: 346663551}
   dialogueText: {fileID: 163757955}
   dialogueScript: {fileID: 4900000, guid: 1261a0a41703b4dc9bb7769c48228984, type: 3}
-  textSpeed: 0.01
+  textSpeed: 100
 --- !u!4 &646732111
 Transform:
   m_ObjectHideFlags: 0
@@ -654,6 +656,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!320 &646732112
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646732109}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: f35d379c949284566864b3ca42607bc4, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings: []
+  m_ExposedReferences:
+    m_References: []
 --- !u!1 &839257326
 GameObject:
   m_ObjectHideFlags: 0
@@ -1197,7 +1216,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_fontSize
-      value: 24
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_margin.z
@@ -1205,11 +1224,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_fontSizeBase
-      value: 24
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_VerticalAlignment
-      value: 512
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_HorizontalAlignment

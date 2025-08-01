@@ -9,6 +9,7 @@ public class DialogueManager : MonoBehaviour
     public Button choiceButton1;
     public Button choiceButton2;
     public int linesBeforeChoices = 3; // Show buttons after 3 lines
+    public int linesPerScene = 7; // Set this per scene in Inspector
     public GameObject dialoguePanel;
     public TMPro.TMP_Text dialogueText;
     public TextAsset dialogueScript;
@@ -75,7 +76,8 @@ public class DialogueManager : MonoBehaviour
             if (choiceButton1 != null) choiceButton1.gameObject.SetActive(true);
             if (choiceButton2 != null) choiceButton2.gameObject.SetActive(true);
         }
-        if (currentLine < dialogueLines.Length)
+        // End dialogue if set number of lines for this scene is reached
+        if (currentLine < dialogueLines.Length && currentLine < linesPerScene)
         {
             ShowLine();
         }
@@ -92,13 +94,11 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator TypeLine(string line)
     {
-        dialogueText.text = "";
-        foreach (char c in line)
-        {
-            dialogueText.text += c;
-            yield return new WaitForSeconds(textSpeed);
-        }
+        dialogueText.text = line;
         typingCoroutine = null;
+        // Automatically go to next line after a short delay
+        yield return new WaitForSeconds(0.1f); // 0.1 second delay after line appears
+        NextLine();
     }
 
     void EndDialogue()
