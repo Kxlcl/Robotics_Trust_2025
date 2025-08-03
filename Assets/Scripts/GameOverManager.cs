@@ -5,6 +5,12 @@ public class GameOverManager : MonoBehaviour
 {
     public GameObject gameOverUI;
 
+    void Start()
+    {
+        if (gameOverUI != null)
+            gameOverUI.SetActive(false);
+    }
+
     public void ShowGameOver()
     {
         gameOverUI.SetActive(true);

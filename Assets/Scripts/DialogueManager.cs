@@ -101,14 +101,23 @@ public class DialogueManager : MonoBehaviour
             typingCoroutine = null;
             return;
         }
-        currentLine++;
+        do {
+            currentLine++;
+        } while (currentLine < dialogueLines.Length && string.IsNullOrWhiteSpace(dialogueLines[currentLine]));
         if (currentLine == linesBeforeChoices)
         {
             if (choiceButton1 != null) choiceButton1.gameObject.SetActive(true);
             if (choiceButton2 != null) choiceButton2.gameObject.SetActive(true);
         }
-        // End dialogue if set number of lines for this scene is reached
-        if (currentLine < dialogueLines.Length && currentLine < linesPerScene)
+        // Special case: end after specific line in stairs scene
+        string sceneName = SceneManager.GetActiveScene().name.ToLower();
+        if (sceneName == "stairs" && currentLine > 0 && dialogueLines[currentLine - 1].Trim() == "You are officially terminated for being late too many times.")
+        {
+            EndDialogue();
+            return;
+        }
+        // End dialogue when the script runs out (ignoring blank lines)
+        if (currentLine < dialogueLines.Length)
         {
             ShowLine();
         }
@@ -120,7 +129,15 @@ public class DialogueManager : MonoBehaviour
 
     void ShowLine()
     {
-        typingCoroutine = StartCoroutine(TypeLine(dialogueLines[currentLine]));
+        // Skip blank lines
+        if (!string.IsNullOrWhiteSpace(dialogueLines[currentLine]))
+        {
+            typingCoroutine = StartCoroutine(TypeLine(dialogueLines[currentLine]));
+        }
+        else
+        {
+            NextLine();
+        }
     }
 
     IEnumerator TypeLine(string line)
@@ -135,10 +152,19 @@ public class DialogueManager : MonoBehaviour
     void EndDialogue()
     {
         dialoguePanel.SetActive(false);
-        // If we're in the station scene, load the stairs scene next
-        if (SceneManager.GetActiveScene().name.ToLower() == "station")
+        string sceneName = SceneManager.GetActiveScene().name.ToLower();
+        if (sceneName == "station")
         {
             SceneManager.LoadScene("stairs");
+        }
+        else if (sceneName == "stairs")
+        {
+            // Show Game Over screen if in stairs scene
+            GameOverManager gameOver = FindAnyObjectByType<GameOverManager>();
+            if (gameOver != null)
+            {
+                gameOver.ShowGameOver();
+            }
         }
     }
 
