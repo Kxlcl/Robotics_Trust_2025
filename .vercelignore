@@ -1,0 +1,21 @@
+# Ignore Unity and system folders
+Library/
+Temp/
+Logs/
+.git/
+.vscode/
+UserSettings/
+Packages/
+ProjectSettings/
+Assets/
+Robotics_Trust_2025/
+Build/
+
+# Only include deployable files
+!.vercelignore
+!vercel.json
+!public/
+!api/
+!package.json
+!package-lock.json
+!README.md
