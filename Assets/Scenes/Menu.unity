@@ -141,15 +141,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ffa56748ab32eb94abdad75551227af6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 379.5279
+      value: 351.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ffa56748ab32eb94abdad75551227af6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ffa56748ab32eb94abdad75551227af6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 27
+      value: 5.6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ffa56748ab32eb94abdad75551227af6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -198,15 +198,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 5d1cd35570dc600419da732416cfb76c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 100
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5d1cd35570dc600419da732416cfb76c, type: 3}
       propertyPath: m_LocalScale.y
-      value: 100
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5d1cd35570dc600419da732416cfb76c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 100
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5d1cd35570dc600419da732416cfb76c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -366,7 +366,8 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials: []
+  m_Materials:
+  - {fileID: 2100000, guid: 01377584c22b84f819ecac7f4047c921, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -936,8 +937,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929015511}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.064919166, y: 0.23804408, z: 0.015948772, w: 0.9689511}
-  m_LocalPosition: {x: -178.42123, y: -95.144745, z: -548.19104}
+  m_LocalRotation: {x: -0.0044118734, y: 0.19641426, z: 0.00088373147, w: 0.9805107}
+  m_LocalPosition: {x: -160.89972, y: -97.072266, z: -555.647}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
