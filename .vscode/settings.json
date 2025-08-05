@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "Robotics Trust 2025.sln"
+    "dotnet.defaultSolution": "Robotics_Trust_2025.sln"
 }
