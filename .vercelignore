@@ -9,7 +9,6 @@ Packages/
 ProjectSettings/
 Assets/
 Robotics_Trust_2025/
-Build/
 
 # Only include deployable files
 !.vercelignore
