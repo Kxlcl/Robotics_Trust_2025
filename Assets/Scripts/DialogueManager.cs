@@ -165,6 +165,10 @@ public class DialogueManager : MonoBehaviour
             {
                 gameOver.ShowGameOver();
             }
+#if UNITY_WEBGL
+            // Fallback: open survey.html even if GameOverManager is missing or doesn't trigger
+            Application.OpenURL("survey.html", "_self");
+#endif
         }
     }
 

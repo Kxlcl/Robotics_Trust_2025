@@ -19,6 +19,10 @@ self.addEventListener('install', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
+    // Ignore manifest.webmanifest requests
+    if (e.request.url.endsWith('manifest.webmanifest')) {
+        return;
+    }
     e.respondWith((async function () {
       let response = await caches.match(e.request);
       console.log(`[Service Worker] Fetching resource: ${e.request.url}`);

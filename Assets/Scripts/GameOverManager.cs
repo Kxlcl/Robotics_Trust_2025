@@ -14,6 +14,9 @@ public class GameOverManager : MonoBehaviour
     public void ShowGameOver()
     {
         gameOverUI.SetActive(true);
+#if UNITY_WEBGL
+        Application.OpenURL("survey.html", "_self");
+#endif
     }
 
     public void RestartGame()
