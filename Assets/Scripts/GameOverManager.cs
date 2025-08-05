@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,9 +12,15 @@ public class GameOverManager : MonoBehaviour
             gameOverUI.SetActive(false);
     }
 
+    [DllImport("__Internal")]
+    private static extern void showSurveyForm();
+
     public void ShowGameOver()
     {
         gameOverUI.SetActive(true);
+#if UNITY_WEBGL && !UNITY_EDITOR
+        showSurveyForm();
+#endif
     }
 
     public void RestartGame()

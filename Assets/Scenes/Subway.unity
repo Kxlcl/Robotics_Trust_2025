@@ -704,8 +704,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   choiceButton1: {fileID: 839257328}
   choiceButton2: {fileID: 556579273}
-  linesBeforeChoices: 17
-  linesPerScene: 17
+  linesBeforeChoices: 15
+  linesPerScene: 15
   dialoguePanel: {fileID: 346663551}
   dialogueText: {fileID: 163757955}
   dialogueScript: {fileID: 4900000, guid: 1261a0a41703b4dc9bb7769c48228984, type: 3}
