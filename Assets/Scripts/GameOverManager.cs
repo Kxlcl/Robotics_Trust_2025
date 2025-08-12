@@ -11,9 +11,18 @@ public class GameOverManager : MonoBehaviour
             gameOverUI.SetActive(false);
     }
 
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void openSurveySameTab();
+#endif
+
     public void ShowGameOver()
     {
         gameOverUI.SetActive(true);
+#if UNITY_WEBGL && !UNITY_EDITOR
+        openSurveySameTab();
+#endif
     }
 
     public void RestartGame()

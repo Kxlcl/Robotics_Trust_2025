@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Game Survey</title>
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .survey-container { max-width: 800px; margin: 40px auto; background: #fff; padding: 32px 24px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+        h1 { text-align: center; margin-bottom: 24px; }
+        .question { margin-bottom: 24px; }
+        .question label { font-weight: bold; display: block; margin-bottom: 8px; }
+        .likert { display: flex; gap: 10px; justify-content: flex-start; margin-top: 8px; }
+        .likert label { font-weight: normal; }
+        .options { margin-top: 8px; }
+        textarea, input[type="text"], input[type="number"] { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+        button { background: #2d7be5; color: #fff; border: none; padding: 12px 32px; border-radius: 6px; font-size: 1.1em; cursor: pointer; margin-top: 16px; }
+        button:disabled { background: #aaa; }
+        .thanks { text-align: center; font-size: 1.3em; color: #2d7be5; margin-top: 32px; }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <h1>Post-Game Survey</h1>
+        <form id="survey-form"></form>
+        <div id="thanks" class="thanks" style="display:none;">Thank you for your feedback!</div>
+    </div>
+    <script>
+    async function loadQuestions() {
+        try {
+            const res = await fetch('assets/Resources/survey.json');
+            if (!res.ok) {
+                throw new Error('Survey questions file not found.');
+            }
+            const data = await res.json();
+            return data.questions;
+        } catch (err) {
+            // Show error message in the form container
+            const form = document.getElementById('survey-form');
+            form.innerHTML = `<div style='color:red; text-align:center;'>Failed to load survey questions. Please try again later.</div>`;
+            throw err;
+        }
+    }
+
+    function createLikert(name, id) {
+        const scale = [
+            {v:1, t:'Strongly Disagree'},
+            {v:2, t:'Disagree'},
+            {v:3, t:'Neutral'},
+            {v:4, t:'Agree'},
+            {v:5, t:'Strongly Agree'}
+        ];
+        return `<div class='likert'>` + scale.map(opt =>
+            `<label><input type='radio' name='${name}' value='${opt.v}' required> ${opt.t}</label>`
+        ).join('') + `</div>`;
+    }
+
+    function createOptions(name, options, multiple) {
+        if (multiple) {
+            return options.map(opt =>
+                `<label><input type='checkbox' name='${name}' value='${opt}'> ${opt}</label>`
+            ).join('<br>');
+        } else {
+            return `<div class='options'>` + options.map(opt =>
+                `<label><input type='radio' name='${name}' value='${opt}' required> ${opt}</label>`
+            ).join('') + `</div>`;
+        }
+    }
+
+    function createQuestion(q) {
+        let html = `<div class='question'><label>${q.text}</label>`;
+        if (q.type === 'Likert') {
+            html += createLikert('q'+q.id, q.id);
+        } else if (q.type === 'Open') {
+            html += `<textarea name='q${q.id}' rows='3' required></textarea>`;
+        } else if (q.type === 'MultipleChoice') {
+            html += createOptions('q'+q.id, q.options, false);
+        } else if (q.type === 'MultipleSelect') {
+            html += createOptions('q'+q.id, q.options, true);
+        } else if (q.type === 'Number') {
+            html += `<input type='number' name='q${q.id}' required>`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    loadQuestions().then(questions => {
+        const form = document.getElementById('survey-form');
+        form.innerHTML = questions.map(createQuestion).join('') + `<button type='submit'>Submit</button>`;
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const answers = {};
+            for (let [k, v] of formData.entries()) {
+                if (answers[k]) {
+                    if (!Array.isArray(answers[k])) answers[k] = [answers[k]];
+                    answers[k].push(v);
+                } else {
+                    answers[k] = v;
+                }
+            }
+            // Save to localStorage (or send to server)
+            localStorage.setItem('surveyAnswers', JSON.stringify(answers));
+            form.style.display = 'none';
+            document.getElementById('thanks').style.display = 'block';
+        };
+    });
+    </script>
+</body>
+</html>

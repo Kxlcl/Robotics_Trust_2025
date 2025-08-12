@@ -303,6 +303,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3377736307541968655, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 3377736307541968655, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1080
+      objectReference: {fileID: 0}
     - target: {fileID: 3502677259869074098, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -310,6 +318,18 @@ PrefabInstance:
     - target: {fileID: 3823948802071984747, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
       propertyPath: m_Name
       value: GameOver
+      objectReference: {fileID: 0}
+    - target: {fileID: 5632279965330876848, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5632279965330876848, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 5632279965330876848, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 7753255453086854786, guid: b74a9bb46846f447f9c6c71af34ddd50, type: 3}
       propertyPath: m_Pivot.x
@@ -546,7 +566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239b0407251154c8abd3567050bc3052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 2
+  sensitivity: 0.1
 --- !u!1 &1609435289
 GameObject:
   m_ObjectHideFlags: 0

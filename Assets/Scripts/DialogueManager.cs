@@ -5,6 +5,10 @@ using System.Collections;
 
 public class DialogueManager : MonoBehaviour
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void openSurveySameTab();
+#endif
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -165,6 +169,10 @@ public class DialogueManager : MonoBehaviour
             {
                 gameOver.ShowGameOver();
             }
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Fallback: open survey.html even if GameOverManager is missing or doesn't trigger
+            openSurveySameTab();
+#endif
         }
     }
 

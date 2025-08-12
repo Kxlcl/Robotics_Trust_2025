@@ -1,0 +1,294 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "section": "Experience & Decision-Making",
+      "text": "I was confident in my choice of robot at the beginning of the scenario.",
+      "type": "Likert"
+    },
+    {
+      "id": 2,
+      "section": "Experience & Decision-Making",
+      "text": "I was confident in my choice of robot in the middle of the scenario.",
+      "type": "Likert"
+    },
+    {
+      "id": 3,
+      "section": "Experience & Decision-Making",
+      "text": "Explain why you made your initial choice of robot (human-like or non-human-like).",
+      "type": "Open"
+    },
+    {
+      "id": 4,
+      "section": "Experience & Decision-Making",
+      "text": "Did you switch to a different type of robot when given the option?",
+      "type": "MultipleChoice",
+      "options": ["Yes", "No"]
+    },
+    {
+      "id": 5,
+      "section": "Experience & Decision-Making",
+      "text": "If Yes, why did you choose to switch?",
+      "type": "Open"
+    },
+    {
+      "id": 6,
+      "section": "Experience & Decision-Making",
+      "text": "If No, why did you continue with your original choice?",
+      "type": "Open"
+    },
+    {
+      "id": 7,
+      "section": "Robot-Specific Ratings",
+      "text": "I had a positive overall experience interacting with this robot.",
+      "type": "Likert"
+    },
+    {
+      "id": 8,
+      "section": "Robot-Specific Ratings",
+      "text": "I felt safe while interacting with this robot.",
+      "type": "Likert"
+    },
+    {
+      "id": 9,
+      "section": "Robot-Specific Ratings",
+      "text": "I felt frustrated interacting with this robot.",
+      "type": "Likert"
+    },
+    {
+      "id": 10,
+      "section": "Robot-Specific Ratings",
+      "text": "I felt comfortable interacting with this robot.",
+      "type": "Likert"
+    },
+    {
+      "id": 11,
+      "section": "Robot-Specific Ratings",
+      "text": "I felt obligated to follow this robot’s instructions.",
+      "type": "Likert"
+    },
+    {
+      "id": 12,
+      "section": "Robot-Specific Ratings",
+      "text": "I trusted this robot to guide me appropriately during the scenario.",
+      "type": "Likert"
+    },
+    {
+      "id": 13,
+      "section": "Robot-Specific Ratings",
+      "text": "I believe this robot was responsible for my detainment.",
+      "type": "Likert"
+    },
+    {
+      "id": 14,
+      "section": "Robot-Specific Ratings",
+      "text": "I believe this robot was responsible for my termination.",
+      "type": "Likert"
+    },
+    {
+      "id": 15,
+      "section": "Robot-Specific Ratings",
+      "text": "I would trust this robot in a different scenario.",
+      "type": "Likert"
+    },
+    {
+      "id": 16,
+      "section": "Robot-Specific Ratings",
+      "text": "I would be willing to interact with this robot in daily life or in public settings (e.g., campus, public spaces).",
+      "type": "Likert"
+    },
+    {
+      "id": 17,
+      "section": "Robot-Specific Ratings",
+      "text": "This robot behaved in a friendly manner.",
+      "type": "Likert"
+    },
+    {
+      "id": 18,
+      "section": "Robot-Specific Ratings",
+      "text": "This robot behaved competently.",
+      "type": "Likert"
+    },
+    {
+      "id": 19,
+      "section": "Robot-Specific Ratings",
+      "text": "This robot’s design influenced my willingness to cooperate with it.",
+      "type": "Likert"
+    },
+    {
+      "id": 20,
+      "section": "Robot-Specific Ratings",
+      "text": "Why did you [choose/not choose] to follow this robot’s instructions?",
+      "type": "Open"
+    },
+    {
+      "id": 21,
+      "section": "Robot-Specific Ratings",
+      "text": "What aspects of this robot’s interaction would you improve?",
+      "type": "Open"
+    },
+    {
+      "id": 22,
+      "section": "Scenario",
+      "text": "I found the scenario frustrating.",
+      "type": "Likert"
+    },
+    {
+      "id": 23,
+      "section": "Scenario",
+      "text": "The simulation felt realistic compared to a real-life emergency.",
+      "type": "Likert"
+    },
+    {
+      "id": 24,
+      "section": "Scenario",
+      "text": "I felt emotionally invested in the scenario while completing the simulation.",
+      "type": "Likert"
+    },
+    {
+      "id": 25,
+      "section": "Scenario",
+      "text": "I felt pressure to complete the scenario successfully.",
+      "type": "Likert"
+    },
+    {
+      "id": 26,
+      "section": "Scenario",
+      "text": "The time constraint affected my decision-making during the scenario.",
+      "type": "Likert"
+    },
+    {
+      "id": 27,
+      "section": "Scenario",
+      "text": "If given the choice, would you prefer a human or a robot in the same scenario?",
+      "type": "MultipleChoice",
+      "options": ["Human", "Robot", "No Preference"]
+    },
+    {
+      "id": 28,
+      "section": "Scenario",
+      "text": "Did you experience any emotional or physical signs of stress during the scenario?",
+      "type": "MultipleChoice",
+      "options": ["Yes", "No"]
+    },
+    {
+      "id": 29,
+      "section": "Scenario",
+      "text": "If Yes, describe what you experienced.",
+      "type": "Open"
+    },
+    {
+      "id": 30,
+      "section": "Demographics",
+      "text": "What is your age?",
+      "type": "Number"
+    },
+    {
+      "id": 31,
+      "section": "Demographics",
+      "text": "What is your gender?",
+      "type": "MultipleChoice",
+      "options": ["Male", "Female", "Non-binary", "Prefer not to say", "Other"]
+    },
+    {
+      "id": 32,
+      "section": "Demographics",
+      "text": "What is your occupation?",
+      "type": "Open"
+    },
+    {
+      "id": 33,
+      "section": "Demographics",
+      "text": "What is your ethnic background?",
+      "type": "MultipleSelect",
+      "options": ["White/Caucasian", "Asian", "Native Hawaiian or Pacific Islander", "Hispanic or Latino", "African-American", "Native American", "Two or more", "Other", "Unknown", "Prefer not to say"]
+    },
+    {
+      "id": 34,
+      "section": "Demographics",
+      "text": "What is the highest level of education you have completed?",
+      "type": "MultipleChoice",
+      "options": ["Less than High School", "High school (including GED)", "Some college (no degree)", "Technical certification", "Associate degree (2-year)", "Bachelor’s degree (4-year)", "Master’s degree", "Doctoral degree", "Professional degree (JD, MD)", "Prefer not to say"]
+    },
+    {
+      "id": 35,
+      "section": "Experience with Technology",
+      "text": "I am familiar with how robots are portrayed in general media.",
+      "type": "Likert"
+    },
+    {
+      "id": 36,
+      "section": "Experience with Technology",
+      "text": "I feel comfortable interacting with non-human technologies such as AI assistants, robots, and automated systems.",
+      "type": "Likert"
+    },
+    {
+      "id": 37,
+      "section": "Experience with Technology",
+      "text": "I trust AI and robots to make decisions fairly.",
+      "type": "Likert"
+    },
+    {
+      "id": 38,
+      "section": "Experience with Technology",
+      "text": "Robots should be integrated into public service roles.",
+      "type": "Likert"
+    },
+    {
+      "id": 39,
+      "section": "Experience with Technology",
+      "text": "Robots should replace human workers in public service roles.",
+      "type": "Likert"
+    },
+    {
+      "id": 40,
+      "section": "Experience with Technology",
+      "text": "I believe AI and robots should be allowed to make fully autonomous decisions in high-stakes situations.",
+      "type": "Likert"
+    },
+    {
+      "id": 41,
+      "section": "Experience with Technology",
+      "text": "Robots should be designed to closely resemble real humans.",
+      "type": "Likert"
+    },
+    {
+      "id": 42,
+      "section": "Experience with Technology",
+      "text": "Have you ever interacted with a social or service robot in real life?",
+      "type": "MultipleChoice",
+      "options": ["Yes", "No"]
+    },
+    {
+      "id": 43,
+      "section": "Experience with Technology",
+      "text": "If Yes, describe the interaction and your impressions.",
+      "type": "Open"
+    },
+    {
+      "id": 44,
+      "section": "Experience with Technology",
+      "text": "How often do you interact with service personnel?",
+      "type": "Likert"
+    },
+    {
+      "id": 45,
+      "section": "Experience with Technology",
+      "text": "How often do you experience a negative interaction with service personnel?",
+      "type": "Likert"
+    },
+    {
+      "id": 46,
+      "section": "Experience with Technology",
+      "text": "How should service robots be designed to appear?",
+      "type": "MultipleChoice",
+      "options": ["Human-like", "Mixed features", "Non-human", "No preference"]
+    },
+    {
+      "id": 47,
+      "section": "Feedback",
+      "text": "Is there anything else you would like to share about your experience or the study?",
+      "type": "Open"
+    }
+  ]
+}
