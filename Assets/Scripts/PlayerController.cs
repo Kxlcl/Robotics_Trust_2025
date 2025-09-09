@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -25,7 +26,8 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("No Camera found as child of PlayerController GameObject.");
         }
         
-        Cursor.lockState = CursorLockMode.Locked;
+        // Use Confined mode - cursor stays in window but can click UI
+        Cursor.lockState = CursorLockMode.Confined;
         
         Debug.Log("PlayerController initialized");
     }
@@ -102,6 +104,18 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log($"Moving player by: {finalMovement}");
         }
+    }
+    
+    // Call this from UI buttons to enter FPS mode
+    public void EnableFPSMode()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+    
+    // Call this from UI buttons to enter UI mode
+    public void EnableUIMode()
+    {
+        Cursor.lockState = CursorLockMode.None;
     }
     
     void OnGUI()

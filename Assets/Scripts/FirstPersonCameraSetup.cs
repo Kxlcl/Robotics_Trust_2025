@@ -87,13 +87,7 @@ public class FirstPersonCameraSetup : MonoBehaviour
         }
         
         // Draw character controller bounds
-        CharacterController cc = GetComponent<CharacterController>();
-        if (cc != null)
-        {
-            Gizmos.color = Color.green;
-            Vector3 center = transform.position + cc.center;
-            Gizmos.DrawWireCapsule(center, cc.radius, cc.height, 1);
-        }
+        
     }
     
     void OnValidate()
