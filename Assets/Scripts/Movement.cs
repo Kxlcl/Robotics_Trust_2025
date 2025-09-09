@@ -19,9 +19,13 @@ public class PlayerMovement : MonoBehaviour
         float moveZ = Input.GetAxis("Vertical");   // W/S
 
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
-        controller.Move(move * speed * Time.deltaTime);
-
+        
+        if (controller.isGrounded)
+            velocity.y = 0f;
+        
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        move.y = velocity.y;
+        
+        controller.Move(move * speed * Time.deltaTime);
     }
 }
