@@ -46,7 +46,11 @@ public class PlayerController : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
         
+        // Only rotate the camera, keep it at fixed local position
         playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        playerCamera.transform.localPosition = Vector3.zero; // Keep camera at origin of parent
+        
+        // Rotate the player body left/right
         transform.Rotate(Vector3.up * mouseX);
     }
     
