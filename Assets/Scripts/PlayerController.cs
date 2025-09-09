@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private float xRotation = 0f;
     private Camera playerCamera;
+    private bool wasMouseOutside = false;
     
     void Start()
     {
@@ -26,27 +27,72 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("No Camera found as child of PlayerController GameObject.");
         }
         
-        // Center mouse cursor on screen
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        
-        // Use Confined mode - cursor stays in window but can click UI
-        Cursor.lockState = CursorLockMode.Confined;
+        // Force cursor to center of screen
+        StartCoroutine(CenterCursorOnStart());
         
         Debug.Log("PlayerController initialized");
     }
     
+    System.Collections.IEnumerator CenterCursorOnStart()
+    {
+        // Wait one frame for screen to initialize
+        yield return null;
+        
+        // Set cursor to screen center
+        Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        
+        // Temporarily lock to force centering
+        Cursor.lockState = CursorLockMode.Locked;
+        yield return null; // Wait another frame
+        
+        // Now set to confined mode for UI interaction
+        Cursor.lockState = CursorLockMode.Confined;
+        
+        Debug.Log($"Cursor centered at screen center: {center}");
+    }
+    
     void Update()
     {
+        // Check if mouse is outside screen bounds
+        Vector3 mousePos = Input.mousePosition;
+        bool mouseOutside = mousePos.x < 0 || mousePos.x > Screen.width || 
+                           mousePos.y < 0 || mousePos.y > Screen.height;
+        
+        // If mouse just returned from outside, reset to center
+        if (wasMouseOutside && !mouseOutside && Cursor.lockState == CursorLockMode.Confined)
+        {
+            // Reset mouse to center to prevent jumps
+            Cursor.lockState = CursorLockMode.Locked;
+            // Wait one frame then return to confined mode
+            StartCoroutine(ResetToConfinedMode());
+        }
+        
+        wasMouseOutside = mouseOutside;
+        
         HandleMouseLook();
         HandleMovement();
+    }
+    
+    System.Collections.IEnumerator ResetToConfinedMode()
+    {
+        yield return null; // Wait one frame
+        Cursor.lockState = CursorLockMode.Confined;
     }
     
     void HandleMouseLook()
     {
         if (playerCamera == null) return;
         
+        // Only process mouse look when cursor is locked
+        if (Cursor.lockState != CursorLockMode.Locked && Cursor.lockState != CursorLockMode.Confined)
+            return;
+            
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        
+        // Prevent extreme jumps when mouse re-enters window
+        mouseX = Mathf.Clamp(mouseX, -10f, 10f);
+        mouseY = Mathf.Clamp(mouseY, -10f, 10f);
         
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);

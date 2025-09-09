@@ -6,7 +6,7 @@
 echo "Starting WebGL build..."
 
 # Path to Unity (adjust if your Unity installation is different)
-UNITY_PATH="/Applications/Unity/Hub/Editor/2022.3.25f1/Unity.app/Contents/MacOS/Unity"
+UNITY_PATH="/Applications/Unity/Hub/Editor/6000.1.11f1/Unity.app/Contents/MacOS/Unity"
 
 # Alternative common Unity paths (uncomment the one that matches your installation)
 # UNITY_PATH="/Applications/Unity/Unity.app/Contents/MacOS/Unity"
