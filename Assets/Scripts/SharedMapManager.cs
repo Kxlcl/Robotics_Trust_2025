@@ -12,7 +12,7 @@ public class SharedMapManager : MonoBehaviour
     }
 
     public SceneArea[] sceneAreas;
-    public FirstPersonController playerController;
+    public PlayerController playerController;
     
     private string currentArea;
 
