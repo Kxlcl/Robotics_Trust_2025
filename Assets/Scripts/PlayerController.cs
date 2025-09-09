@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("No Camera found as child of PlayerController GameObject.");
         }
         
+        // Center mouse cursor on screen
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        
         // Use Confined mode - cursor stays in window but can click UI
         Cursor.lockState = CursorLockMode.Confined;
         
