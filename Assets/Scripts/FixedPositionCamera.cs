@@ -15,8 +15,9 @@ public class FixedPositionCamera : MonoBehaviour
 
     void Update()
     {
+        // DISABLED - Let PlayerController handle camera movement
         // Keep camera at its starting position
-        transform.position = startPosition;
+        // transform.position = startPosition;
 
         // Only allow mouse look after game has started
         PlayerController playerController = FindObjectOfType<PlayerController>();
@@ -25,6 +26,8 @@ public class FixedPositionCamera : MonoBehaviour
             gameStarted = true;
         }
 
+        // DISABLED - Let PlayerController handle mouse look
+        /*
         if (gameStarted)
         {
             // Mouse look 
@@ -34,5 +37,6 @@ public class FixedPositionCamera : MonoBehaviour
             transform.Rotate(Vector3.up, mouseX, Space.World);
             transform.Rotate(Vector3.right, -mouseY, Space.Self);
         }
+        */
     }
 }

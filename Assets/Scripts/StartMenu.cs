@@ -12,17 +12,17 @@ public class StartMenu : MonoBehaviour
             startButton.SetActive(false);
         }
         
-        // Unlock camera
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // Let PlayerController handle cursor state - don't override it here
+        // Cursor.lockState = CursorLockMode.None;
+        // Cursor.visible = true;
         
-        // Start dialogue
-        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
-        if (dialogueManager != null)
+        // Start the player controller game instead
+        PlayerController playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
         {
-            dialogueManager.StartDialogue();
+            playerController.StartGame();
         }
         
-        Debug.Log("Game started - button hidden, camera unlocked, dialogue started");
+        Debug.Log("Game started - button hidden, PlayerController started");
     }
 }

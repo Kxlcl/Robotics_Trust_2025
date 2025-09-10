@@ -31,7 +31,25 @@ public class PlayerController : MonoBehaviour
         
         if (playerCamera == null)
         {
-            Debug.LogError("No Camera found as child of PlayerController GameObject.");
+            // Try to find main camera in scene
+            playerCamera = Camera.main;
+            if (playerCamera == null)
+            {
+                playerCamera = FindObjectOfType<Camera>();
+            }
+            
+            if (playerCamera != null)
+            {
+                Debug.Log($"Found camera: {playerCamera.name} at position: {playerCamera.transform.position}");
+            }
+            else
+            {
+                Debug.LogError("No Camera found anywhere in scene!");
+            }
+        }
+        else
+        {
+            Debug.Log($"Found child camera: {playerCamera.name}");
         }
         
         // Force cursor to center of screen
@@ -57,6 +75,14 @@ public class PlayerController : MonoBehaviour
         if (!gameStarted)
         {
             return;
+        }
+        
+        // Force cursor to stay locked when game is active
+        if (Cursor.lockState == CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Debug.Log("Forcing cursor back to locked state");
         }
         
         // Check if mouse is outside screen bounds
@@ -97,10 +123,19 @@ public class PlayerController : MonoBehaviour
         
         // Only process mouse look when cursor is locked
         if (Cursor.lockState != CursorLockMode.Locked && Cursor.lockState != CursorLockMode.Confined)
+        {
+            Debug.Log($"Mouse look blocked - Cursor state: {Cursor.lockState}");
             return;
+        }
             
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        
+        // Debug mouse input occasionally
+        if (Time.frameCount % 60 == 0 && (Mathf.Abs(mouseX) > 0.01f || Mathf.Abs(mouseY) > 0.01f))
+        {
+            Debug.Log($"Mouse input - X: {mouseX}, Y: {mouseY}");
+        }
         
         // Prevent extreme jumps when mouse re-enters window
         mouseX = Mathf.Clamp(mouseX, -10f, 10f);
@@ -115,6 +150,7 @@ public class PlayerController : MonoBehaviour
         
         // Rotate the player body left/right
         transform.Rotate(Vector3.up * mouseX);
+        
     }
     
     void HandleMovement()
@@ -183,22 +219,46 @@ public class PlayerController : MonoBehaviour
     public void StartGame()
     {
         gameStarted = true;
-        // movementEnabled stays false - only camera look is enabled
+        movementEnabled = true; // Enable movement immediately
         
-        // Enable camera look around but keep cursor visible for UI
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // Force cursor to confined mode for free roam
+        StartCoroutine(EnableConfinedMode());
         
         // Trigger dialogue system
         TriggerStartDialogue();
         
-        Debug.Log("Game started - Camera look enabled, movement disabled, dialogue started");
+        Debug.Log("Game started - Movement and camera enabled, confined mode active");
+    }
+    
+    System.Collections.IEnumerator EnableConfinedMode()
+    {
+        // Wait a frame to ensure UI is done
+        yield return null;
+        
+        // Force locked mode for reliable mouse look
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        // Keep in locked mode for reliable mouse look
+        // yield return null;
+        // Cursor.lockState = CursorLockMode.Confined;
+        
+        Debug.Log($"Cursor state set to: {Cursor.lockState}, Visible: {Cursor.visible}");
     }
     
     private void TriggerStartDialogue()
     {
-        // DialogueManager now auto-starts, no need to instantiate
-        Debug.Log("DialogueManager auto-starts - no manual triggering needed");
+        // Find and start the dialogue manager
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.StartDialogue();
+            Debug.Log("DialogueManager found and started");
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found in scene");
+        }
     }
     
     // Call this to enable WASD movement
