@@ -11,6 +11,13 @@ public class PlayerController : MonoBehaviour
     [Header("Mouse Look Settings")]
     public float mouseSensitivity = 2f;
     
+    [Header("Game State")]
+    public bool gameStarted = false;
+    public bool movementEnabled = false;
+    
+    [Header("Dialogue")]
+    public GameObject dialoguePrefab;
+    
     private CharacterController controller;
     private Vector3 velocity;
     private float xRotation = 0f;
@@ -38,21 +45,20 @@ public class PlayerController : MonoBehaviour
         // Wait one frame for screen to initialize
         yield return null;
         
-        // Set cursor to screen center
-        Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        // Keep cursor free for menu interaction until game starts
+        Cursor.lockState = CursorLockMode.None;
         
-        // Temporarily lock to force centering
-        Cursor.lockState = CursorLockMode.Locked;
-        yield return null; // Wait another frame
-        
-        // Now set to confined mode for UI interaction
-        Cursor.lockState = CursorLockMode.Confined;
-        
-        Debug.Log($"Cursor centered at screen center: {center}");
+        Debug.Log("PlayerController ready - waiting for game to start");
     }
     
     void Update()
     {
+        // Don't process any input until game has started
+        if (!gameStarted)
+        {
+            return;
+        }
+        
         // Check if mouse is outside screen bounds
         Vector3 mousePos = Input.mousePosition;
         bool mouseOutside = mousePos.x < 0 || mousePos.x > Screen.width || 
@@ -69,8 +75,14 @@ public class PlayerController : MonoBehaviour
         
         wasMouseOutside = mouseOutside;
         
+        // Always allow mouse look after game starts
         HandleMouseLook();
-        HandleMovement();
+        
+        // Only allow movement if specifically enabled
+        if (movementEnabled)
+        {
+            HandleMovement();
+        }
     }
     
     System.Collections.IEnumerator ResetToConfinedMode()
@@ -166,6 +178,43 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
     }
+    
+    // Call this from the Start button to begin the game
+    public void StartGame()
+    {
+        gameStarted = true;
+        // movementEnabled stays false - only camera look is enabled
+        
+        // Enable camera look around but keep cursor visible for UI
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
+        // Trigger dialogue system
+        TriggerStartDialogue();
+        
+        Debug.Log("Game started - Camera look enabled, movement disabled, dialogue started");
+    }
+    
+    private void TriggerStartDialogue()
+    {
+        // DialogueManager now auto-starts, no need to instantiate
+        Debug.Log("DialogueManager auto-starts - no manual triggering needed");
+    }
+    
+    // Call this to enable WASD movement
+    public void EnableMovement()
+    {
+        movementEnabled = true;
+        Debug.Log("Movement enabled");
+    }
+    
+    // Call this to disable WASD movement
+    public void DisableMovement()
+    {
+        movementEnabled = false;
+        Debug.Log("Movement disabled");
+    }
+    
     
     void OnGUI()
     {

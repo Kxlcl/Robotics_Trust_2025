@@ -1,20 +1,28 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class StartMenu : MonoBehaviour
 {
-    // Call this from your Start button's OnClick event
+    public GameObject startButton;
+    
     public void StartGame()
     {
-        // Loads the next scene in build order (after the menu)
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        // Hide the start button
+        if (startButton != null)
         {
-            SceneManager.LoadScene(nextSceneIndex);
+            startButton.SetActive(false);
         }
-        else
+        
+        // Unlock camera
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
+        // Start dialogue
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
         {
-            Debug.LogError("No next scene found in build settings.");
+            dialogueManager.StartDialogue();
         }
+        
+        Debug.Log("Game started - button hidden, camera unlocked, dialogue started");
     }
 }
