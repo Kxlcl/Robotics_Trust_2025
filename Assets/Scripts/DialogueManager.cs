@@ -8,6 +8,10 @@ public class DialogueManager : MonoBehaviour
     public TMPro.TMP_Text dialogueText;
     public float textSpeed = 0.05f;
     
+    [Header("Audio")]
+    public AudioSource backgroundAudioSource;
+    public AudioClip newAudioClip;
+    
     private string[] dialogueLines;
     private int currentLine = 0;
     private Coroutine typingCoroutine;
@@ -77,5 +81,19 @@ public class DialogueManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         dialoguePanel.SetActive(false);
+        
+        // Switch audio when dialogue ends
+        SwitchAudio();
+    }
+    
+    void SwitchAudio()
+    {
+        if (backgroundAudioSource != null && newAudioClip != null)
+        {
+            backgroundAudioSource.Stop();
+            backgroundAudioSource.clip = newAudioClip;
+            backgroundAudioSource.loop = false; // Ensure it doesn't loop
+            backgroundAudioSource.Play();
+        }
     }
 }
