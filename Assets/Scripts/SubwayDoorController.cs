@@ -39,6 +39,8 @@ public class SubwayDoorController : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
         }
         
+        // DISABLED - Let SimpleSubwayDoors handle door opening instead
+        /*
         // Find dialogue manager to listen for announcement end
         if (autoOpenAfterAnnouncement)
         {
@@ -49,6 +51,7 @@ public class SubwayDoorController : MonoBehaviour
                 StartCoroutine(WaitForAnnouncementEnd());
             }
         }
+        */
         
         Debug.Log($"Subway door initialized - {(isLeftDoor ? "Left" : "Right")} door");
     }
