@@ -7,11 +7,7 @@ Getting fired today would mean losing your income, your health insurance, and po
 As the train slows into the station, you brace yourself to move quickly, hoping nothing delays you. 
 
 
-Attention, ladies and gentlemen. 
-A dangerous emergency incident has just occurred at this station. 
-Due to the nature and severity of the situation, we cannot disclose explicit details at this time. For your safety, all passengers must evacuate the train station and identify themselves with authorities for security purposes. 
-Service robots will assist by verifying passenger IDs and escorting you to a safe area. 
-Thank you for riding with City Transit.
+Attention, ladies and gentlemen. A dangerous emergency incident has just occurred at this station. Due to the nature and severity of the situation, we cannot disclose explicit details at this time. For your safety, all passengers must evacuate the train station and identify themselves with authorities for security purposes. Service robots will assist by verifying passenger IDs and escorting you to a safe area. Thank you for riding with City Transit.
 
 Please provide a form of identification to verify your presence at the train station today. Time is critical. Please cooperate for your safety and others.
 Thank you for your cooperation. Please follow me and the other passengers in my group to be escorted to a safe area.

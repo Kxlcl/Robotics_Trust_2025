@@ -307,6 +307,25 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
+--- !u!114 &44534187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44534178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftDoor: {fileID: 0}
+  rightDoor: {fileID: 0}
+  part75: {fileID: 44534178}
+  part76: {fileID: 752471505}
+  doorAreaObjects: []
+  animationTime: 2
+  announcementDuration: 10
 --- !u!1 &47608745 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4465497343168530381, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -2807,6 +2826,25 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
+--- !u!114 &752471514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752471505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftDoor: {fileID: 0}
+  rightDoor: {fileID: 0}
+  part75: {fileID: 0}
+  part76: {fileID: 0}
+  doorAreaObjects: []
+  animationTime: 2
+  announcementDuration: 10
 --- !u!1 &760297972
 GameObject:
   m_ObjectHideFlags: 0
@@ -6670,7 +6708,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8753077091706240687, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.9
+      value: -3.77
       objectReference: {fileID: 0}
     - target: {fileID: 8753077091706240687, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7137,12 +7175,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3640973854861472484, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 44534183}
+    - targetCorrespondingSourceObject: {fileID: 3640973854861472484, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 44534187}
     - targetCorrespondingSourceObject: {fileID: -8472533946331775325, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 752471509}
     - targetCorrespondingSourceObject: {fileID: -8472533946331775325, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 752471510}
+    - targetCorrespondingSourceObject: {fileID: -8472533946331775325, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 752471514}
     - targetCorrespondingSourceObject: {fileID: 6095174529650163136, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1707704003}
@@ -8023,7 +8067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb263afc214cf45c08277890c281fe94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeHeight: 5
+  eyeHeight: 10
   setupOnStart: 1
 --- !u!114 &1759951700
 MonoBehaviour:
@@ -8061,7 +8105,7 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 10
+  m_Height: 5
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
@@ -8827,7 +8871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_margin.x
-      value: -333.72107
+      value: -797.5712
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_margin.y
@@ -8835,7 +8879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_margin.z
-      value: -389.74585
+      value: -831.7815
       objectReference: {fileID: 0}
     - target: {fileID: 2822172219044086651, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
       propertyPath: m_fontSizeBase
@@ -8958,7 +9002,8 @@ PrefabInstance:
       value: Dialogue
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4613165527533411779, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
@@ -9190,7 +9235,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftDoor: {fileID: 2030281923}
   rightDoor: {fileID: 2134230318}
+  part75: {fileID: 0}
+  part76: {fileID: 0}
+  doorAreaObjects: []
   animationTime: 2
+  announcementDuration: 10
 --- !u!1 &2049543449 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 469159790807680827, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -9830,9 +9879,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftDoor: {fileID: 0}
-  rightDoor: {fileID: 0}
-  animationTime: 2
+  leftDoor: {fileID: 2030281923}
+  rightDoor: {fileID: 2134230318}
+  part75: {fileID: 44534178}
+  part76: {fileID: 752471505}
+  doorAreaObjects: []
+  animationTime: 1.5
+  announcementDuration: 31
 --- !u!1 &2135543984 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6074271982822421375, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}

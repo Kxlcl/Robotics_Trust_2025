@@ -131,11 +131,6 @@ public class PlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
         
-        // Debug mouse input occasionally
-        if (Time.frameCount % 60 == 0 && (Mathf.Abs(mouseX) > 0.01f || Mathf.Abs(mouseY) > 0.01f))
-        {
-            Debug.Log($"Mouse input - X: {mouseX}, Y: {mouseY}");
-        }
         
         // Prevent extreme jumps when mouse re-enters window
         mouseX = Mathf.Clamp(mouseX, -10f, 10f);
@@ -172,11 +167,6 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.D)) moveX = 1f;
         }
         
-        // Debug input
-        if (moveX != 0 || moveZ != 0)
-        {
-            Debug.Log($"Movement input - X: {moveX}, Z: {moveZ}");
-        }
         
         // Calculate movement
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
@@ -196,11 +186,6 @@ public class PlayerController : MonoBehaviour
         Vector3 finalMovement = move * Time.deltaTime;
         controller.Move(finalMovement);
         
-        // Debug movement
-        if (finalMovement.magnitude > 0.01f)
-        {
-            Debug.Log($"Moving player by: {finalMovement}");
-        }
     }
     
     // Call this from UI buttons to enter FPS mode
@@ -276,11 +261,4 @@ public class PlayerController : MonoBehaviour
     }
     
     
-    void OnGUI()
-    {
-        // Display debug info on screen
-        GUI.Label(new Rect(10, 10, 200, 20), $"Horizontal: {Input.GetAxis("Horizontal")}");
-        GUI.Label(new Rect(10, 30, 200, 20), $"Vertical: {Input.GetAxis("Vertical")}");
-        GUI.Label(new Rect(10, 50, 200, 20), $"Grounded: {controller.isGrounded}");
-    }
 }
