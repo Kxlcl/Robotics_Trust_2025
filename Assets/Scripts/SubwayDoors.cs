@@ -14,14 +14,16 @@ public class SubwayDoors : MonoBehaviour
     
     IEnumerator WaitForAnnouncement(DialogueManager dialogueManager)
     {
-        // Wait for announcement to appear
-        while (!dialogueManager.dialoguePanel.activeInHierarchy)
+        // Wait until the dialogue text contains "Attention, ladies and gentlemen" (line 8)
+        while (!dialogueManager.dialogueText.text.Contains("Attention, ladies and gentlemen"))
         {
             yield return new WaitForSeconds(0.1f);
         }
         
-        // Wait 32 seconds
-        yield return new WaitForSeconds(32f);
+        Debug.Log("Line 8 detected: 'Attention, ladies and gentlemen' - opening doors in 30 seconds");
+        
+        // Wait 30 seconds after line 8 appears
+        yield return new WaitForSeconds(30f);
         
         // Open doors
         OpenDoors();

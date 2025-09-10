@@ -319,13 +319,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftDoor: {fileID: 0}
-  rightDoor: {fileID: 0}
-  part75: {fileID: 44534178}
-  part76: {fileID: 752471505}
-  doorAreaObjects: []
-  animationTime: 2
-  announcementDuration: 10
 --- !u!1 &47608745 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4465497343168530381, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -2838,13 +2831,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftDoor: {fileID: 0}
-  rightDoor: {fileID: 0}
-  part75: {fileID: 0}
-  part76: {fileID: 0}
-  doorAreaObjects: []
-  animationTime: 2
-  announcementDuration: 10
 --- !u!1 &760297972
 GameObject:
   m_ObjectHideFlags: 0
@@ -9216,11 +9202,6 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
---- !u!4 &2030281923 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -6654848724659481041, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
-  m_PrefabInstance: {fileID: 1688621143}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2030281926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9233,13 +9214,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftDoor: {fileID: 2030281923}
-  rightDoor: {fileID: 2134230318}
-  part75: {fileID: 0}
-  part76: {fileID: 0}
-  doorAreaObjects: []
-  animationTime: 2
-  announcementDuration: 10
 --- !u!1 &2049543449 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 469159790807680827, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -9766,7 +9740,7 @@ Animation:
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 1
-  m_UpdateMode: 1
+  m_UpdateMode: 0
   m_CullingType: 0
 --- !u!1 &2119771400 stripped
 GameObject:
@@ -9862,11 +9836,6 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
---- !u!4 &2134230318 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6790741643261692447, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
-  m_PrefabInstance: {fileID: 1688621143}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2134230321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9879,13 +9848,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftDoor: {fileID: 2030281923}
-  rightDoor: {fileID: 2134230318}
-  part75: {fileID: 44534178}
-  part76: {fileID: 752471505}
-  doorAreaObjects: []
-  animationTime: 1.5
-  announcementDuration: 31
 --- !u!1 &2135543984 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6074271982822421375, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
