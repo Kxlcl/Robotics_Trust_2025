@@ -101,6 +101,35 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(HideDialogueAfterDelay());
     }
     
+    public void ShowCooperationDialogue()
+    {
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Please cooperate for your safety and others.";
+        Debug.Log("Showing cooperation dialogue after no choice");
+        
+        // Show yes/no buttons again after 3 seconds
+        StartCoroutine(RetryYesNoDecisionAfterDelay());
+    }
+    
+    System.Collections.IEnumerator RetryYesNoDecisionAfterDelay()
+    {
+        // Wait for player to read the cooperation message
+        yield return new WaitForSeconds(3f);
+        
+        Debug.Log("Showing yes/no decisions again after cooperation message");
+        
+        // Find and trigger decision manager for second yes/no attempt
+        DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
+        if (decisionManager != null)
+        {
+            decisionManager.ShowSecondYesNoDecisions();
+        }
+        else
+        {
+            Debug.LogWarning("DecisionManager not found for second yes/no options");
+        }
+    }
+    
     System.Collections.IEnumerator HideDialogueAfterDelay()
     {
         yield return new WaitForSeconds(5f);

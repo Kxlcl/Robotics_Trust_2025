@@ -14,6 +14,7 @@ public class DecisionManager : MonoBehaviour
     
     private bool robotDecisionMade = false;
     private bool yesNoDecisionMade = false;
+    private bool isSecondChance = false;
     
     [System.Serializable]
     public class DecisionOption
@@ -363,14 +364,16 @@ public class DecisionManager : MonoBehaviour
         }
         else
         {
-            // For "No" choice, transition directly to scene
-            if (SceneTransitionManager.Instance != null)
+            // For "No" choice
+            if (isSecondChance)
             {
-                SceneTransitionManager.Instance.TransitionToScene(targetScene);
+                // Second "No" - game over
+                ShowGameOver();
             }
             else
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene);
+                // First "No" - show cooperation message and give second chance
+                ShowCooperationDialogue();
             }
         }
     }
@@ -386,6 +389,75 @@ public class DecisionManager : MonoBehaviour
         else
         {
             Debug.LogWarning("DialogueManager not found for follow dialogue");
+        }
+    }
+    
+    void ShowCooperationDialogue()
+    {
+        // Find DialogueManager and show the cooperation message
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ShowCooperationDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found for cooperation dialogue");
+        }
+    }
+    
+    public void ShowSecondYesNoDecisions()
+    {
+        Debug.Log("ShowSecondYesNoDecisions() called - second chance");
+        
+        // Mark this as second chance
+        isSecondChance = true;
+        
+        // Reset the yes/no decision flag to allow showing buttons again
+        yesNoDecisionMade = false;
+        
+        if (decisionPanel != null)
+        {
+            decisionPanel.SetActive(true);
+            SetupYesNoButtons();
+            
+            // Enable UI interaction in PlayerController
+            PlayerController playerController = FindObjectOfType<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.EnableUIInteraction();
+            }
+            
+            // Change cursor to free mode for UI interaction
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            
+            Debug.Log("Second chance Yes/No decision panel shown");
+        }
+    }
+    
+    void ShowGameOver()
+    {
+        Debug.Log("Game Over - Player refused cooperation twice");
+        
+        // Find and trigger the existing GameOverManager
+        GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
+        if (gameOverManager != null)
+        {
+            gameOverManager.ShowGameOver();
+        }
+        else
+        {
+            Debug.LogWarning("GameOverManager not found - falling back to scene transition");
+            // Fallback to scene transition if GameOverManager not found
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.TransitionToScene("Survey_Scene");
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Survey_Scene");
+            }
         }
     }
     
