@@ -26,10 +26,23 @@ public class DecisionManager : MonoBehaviour
     
     void Start()
     {
-        // Hide decision panel initially
-        if (decisionPanel != null)
+        // Check current scene - only active in ID_Scene
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        
+        if (currentScene == "ID_Scene")
         {
-            decisionPanel.SetActive(false);
+            // Hide decision panel initially
+            if (decisionPanel != null)
+            {
+                decisionPanel.SetActive(false);
+            }
+            Debug.Log("DecisionManager active in ID_Scene");
+        }
+        else
+        {
+            // In other scenes, deactivate this component
+            this.enabled = false;
+            Debug.Log($"DecisionManager disabled in {currentScene}");
         }
     }
     

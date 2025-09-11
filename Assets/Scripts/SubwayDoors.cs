@@ -11,13 +11,7 @@ public class SubwayDoors : MonoBehaviour
         // Check current scene
         string currentScene = SceneManager.GetActiveScene().name;
         
-        if (currentScene == "ID_Scene")
-        {
-            // If we're in ID_Scene, play door opening animation
-            OpenDoors();
-            Debug.Log("ID_Scene detected - playing door opening animation");
-        }
-        else
+        if (currentScene == "Start_Scene")
         {
             // Find the dialogue manager and wait for announcement
             DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
@@ -30,6 +24,22 @@ public class SubwayDoors : MonoBehaviour
             {
                 Debug.LogError("DialogueManager not found in Start_Scene!");
             }
+        }
+        else if (currentScene == "ID_Scene")
+        {
+            // If we're in ID_Scene, play door opening animation
+            OpenDoors();
+            Debug.Log("ID_Scene detected - playing door opening animation");
+        }
+        else if (currentScene == "Waiting_Scene")
+        {
+            // In Waiting_Scene, doors should be closed (default state)
+            Debug.Log("Waiting_Scene detected - doors remain in default closed position");
+        }
+        else
+        {
+            // In other scenes, do nothing
+            Debug.Log($"SubwayDoors inactive in {currentScene}");
         }
     }
     

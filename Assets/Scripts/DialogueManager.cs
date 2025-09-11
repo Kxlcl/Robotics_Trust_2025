@@ -9,6 +9,9 @@ public class DialogueManager : MonoBehaviour
     public TMPro.TMP_Text dialogueText;
     public float textSpeed = 0.05f;
     
+    [Header("Player Repositioning")]
+    public Vector3 newPlayerPosition = new Vector3(170f, 0f, -95f);
+    
     [Header("Audio")]
     public AudioSource backgroundAudioSource;
     public AudioClip newAudioClip;
@@ -27,6 +30,17 @@ public class DialogueManager : MonoBehaviour
         if (currentScene == "ID_Scene")
         {
             ShowIDSceneDialogue();
+        }
+        else
+        {
+            // In other scenes (like Waiting_Scene), keep dialogue completely hidden
+            if (dialoguePanel != null)
+            {
+                dialoguePanel.SetActive(false);
+            }
+            // Disable this component in non-ID scenes
+            this.enabled = false;
+            Debug.Log($"DialogueManager disabled in {currentScene}");
         }
     }
     
@@ -97,8 +111,74 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = "Thank you for your cooperation. Please follow me and the other passengers in my group to be escorted to a safe area.";
         Debug.Log("Showing follow dialogue after yes choice");
         
-        // Hide dialogue after 5 seconds
-        StartCoroutine(HideDialogueAfterDelay());
+        // Reposition player and transition to Waiting_Scene after 3 seconds
+        StartCoroutine(RepositionPlayerAndTransition());
+    }
+    
+    System.Collections.IEnumerator RepositionPlayerAndTransition()
+    {
+        yield return new WaitForSeconds(3f);
+        
+        // Reposition the player to new location
+        RepositionPlayer();
+        
+        // Wait a moment then transition
+        yield return new WaitForSeconds(2f);
+        
+        dialoguePanel.SetActive(false);
+        Debug.Log("Player repositioned, transitioning to Waiting_Scene");
+        
+        // Transition to Waiting_Scene
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.TransitionToScene("Waiting_Scene");
+        }
+        else
+        {
+            // Fallback direct scene load
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Waiting_Scene");
+        }
+    }
+    
+    void RepositionPlayer()
+    {
+        // Find the player and move them to new position
+        PlayerController player = FindObjectOfType<PlayerController>();
+        if (player != null)
+        {
+            // Use configured position, but keep current Y if newPlayerPosition.y is 0
+            Vector3 targetPosition = newPlayerPosition;
+            if (newPlayerPosition.y == 0f)
+            {
+                targetPosition.y = player.transform.position.y; // Keep current height
+            }
+            
+            player.transform.position = targetPosition;
+            Debug.Log($"Player repositioned to {targetPosition}");
+        }
+        else
+        {
+            Debug.LogWarning("PlayerController not found for repositioning");
+        }
+    }
+    
+    System.Collections.IEnumerator HideDialogueAndTransition()
+    {
+        yield return new WaitForSeconds(5f);
+        
+        dialoguePanel.SetActive(false);
+        Debug.Log("Dialogue hidden, transitioning to Waiting_Scene");
+        
+        // Transition to Waiting_Scene
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.TransitionToScene("Waiting_Scene");
+        }
+        else
+        {
+            // Fallback direct scene load
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Waiting_Scene");
+        }
     }
     
     public void ShowCooperationDialogue()

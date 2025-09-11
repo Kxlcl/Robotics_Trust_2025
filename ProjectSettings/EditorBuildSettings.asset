@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ID_Scene.unity
     guid: 3b8ad1b3d3e11457da042a8af0e645ba
+  - enabled: 1
+    path: Assets/Scenes/Waiting_Scene.unity
+    guid: 839f2b194699242c38839e52060de0af
   - enabled: 0
     path: Assets/Scenes/Subway.unity
     guid: 7390d8f65afba4f5691f8f021d203d2e

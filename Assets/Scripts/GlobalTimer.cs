@@ -4,7 +4,7 @@ using TMPro;
 
 public class GlobalTimer : MonoBehaviour
 {
-    // Removed static instance for persistence
+    public static GlobalTimer Instance;
     private float initialTime = 600f; // 10 minutes
     public float timeRemaining;
     public TextMeshProUGUI timerText; // Assign in Inspector
@@ -12,8 +12,20 @@ public class GlobalTimer : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        timeRemaining = initialTime;
+        // Singleton pattern to prevent multiple timers
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            timeRemaining = initialTime;
+            Debug.Log("GlobalTimer singleton created and marked DontDestroyOnLoad");
+        }
+        else
+        {
+            // Destroy duplicate timer
+            Debug.Log("Duplicate GlobalTimer destroyed");
+            Destroy(gameObject);
+        }
     }
     
     void Start()
@@ -45,20 +57,20 @@ public class GlobalTimer : MonoBehaviour
         {
             StartTimer();
         }
-        else if (currentScene != "ID_Scene")
+        else if (currentScene == "ID_Scene" || currentScene == "Waiting_Scene")
+        {
+            // Show timer if we're in ID_Scene or Waiting_Scene (timer should persist once started)
+            if (timerText != null && timerStarted)
+            {
+                timerText.gameObject.SetActive(true);
+            }
+        }
+        else
         {
             // Hide timer in other scenes
             if (timerText != null)
             {
                 timerText.gameObject.SetActive(false);
-            }
-        }
-        else if (currentScene == "ID_Scene" && timerStarted)
-        {
-            // Show timer if already started and we're in ID_Scene
-            if (timerText != null)
-            {
-                timerText.gameObject.SetActive(true);
             }
         }
     }
