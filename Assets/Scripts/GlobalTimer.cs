@@ -8,7 +8,7 @@ public class GlobalTimer : MonoBehaviour
     private float initialTime = 600f; // 10 minutes
     public float timeRemaining;
     public TextMeshProUGUI timerText; // Assign in Inspector
-    private bool timerStarted = false;
+    public bool timerStarted = false;
 
     void Awake()
     {
@@ -53,13 +53,9 @@ public class GlobalTimer : MonoBehaviour
     {
         string currentScene = SceneManager.GetActiveScene().name;
         
-        if (currentScene == "ID_Scene" && !timerStarted)
+        if (currentScene == "ID_Scene" || currentScene == "Waiting_Scene")
         {
-            StartTimer();
-        }
-        else if (currentScene == "ID_Scene" || currentScene == "Waiting_Scene")
-        {
-            // Show timer if we're in ID_Scene or Waiting_Scene (timer should persist once started)
+            // Show timer if already started
             if (timerText != null && timerStarted)
             {
                 timerText.gameObject.SetActive(true);

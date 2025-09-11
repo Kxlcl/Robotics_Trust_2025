@@ -86,6 +86,14 @@ public class DecisionManager : MonoBehaviour
             }
             
             Debug.Log("Decision panel shown with choices - cursor confined for UI interaction");
+            
+            // Start timer when decisions appear
+            if (GlobalTimer.Instance != null && GlobalTimer.Instance.timerText != null)
+            {
+                GlobalTimer.Instance.timerStarted = true;
+                GlobalTimer.Instance.timerText.gameObject.SetActive(true);
+                Debug.Log("Timer started when decisions appeared");
+            }
         }
     }
     
