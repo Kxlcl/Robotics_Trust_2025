@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     
     [Header("ID Scene Movement Lock")]
     public bool movementLocked = false;
+    public bool allowUIInteraction = false;
     
     [Header("Dialogue")]
     public GameObject dialoguePrefab;
@@ -98,8 +99,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
         
-        // Force cursor to stay locked when game is active
-        if (gameStarted && Cursor.lockState != CursorLockMode.Locked)
+        // Force cursor to stay locked when game is active (unless UI interaction is allowed)
+        if (gameStarted && !allowUIInteraction && Cursor.lockState != CursorLockMode.Locked)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -129,10 +130,20 @@ public class PlayerController : MonoBehaviour
     {
         if (playerCamera == null) return;
         
-        // Only process mouse look when cursor is locked
-        if (Cursor.lockState != CursorLockMode.Locked)
+        // Only process mouse look when cursor is locked (or when UI interaction is allowed but not over UI)
+        if (Cursor.lockState != CursorLockMode.Locked && !allowUIInteraction)
         {
             return;
+        }
+        
+        // If UI interaction is allowed, check if mouse is over UI
+        if (allowUIInteraction && UnityEngine.EventSystems.EventSystem.current != null)
+        {
+            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            {
+                // Mouse is over UI, don't do mouse look
+                return;
+            }
         }
             
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
@@ -271,6 +282,19 @@ public class PlayerController : MonoBehaviour
     {
         movementEnabled = false;
         Debug.Log("Movement disabled");
+    }
+    
+    // Methods for UI interaction control
+    public void EnableUIInteraction()
+    {
+        allowUIInteraction = true;
+        Debug.Log("UI interaction enabled - cursor can interact with UI");
+    }
+    
+    public void DisableUIInteraction()
+    {
+        allowUIInteraction = false;
+        Debug.Log("UI interaction disabled - cursor locked for mouse look");
     }
     
     // Collision detection for Part111

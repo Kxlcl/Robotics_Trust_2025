@@ -5778,10 +5778,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6649c097d7194ad99994e0a91430b34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decisionPanel: {fileID: 0}
-  buttonContainer: {fileID: 0}
-  buttonPrefab: {fileID: 0}
-  decisions: []
+  decisionPanel: {fileID: 1785713661}
+  decisionButtons:
+  - {fileID: 1701380674}
+  - {fileID: 617256569}
+  decisions:
+  - choiceId: robot_a
+    choiceText: Follow Robot A
+    targetScene: RobotA_Scene
+  - choiceId: robot_b
+    choiceText: Follow Robot b
+    targetScene: RobotB_Scene
 --- !u!4 &1401561183
 Transform:
   m_ObjectHideFlags: 0
@@ -8277,6 +8284,7 @@ MonoBehaviour:
   gameStarted: 0
   movementEnabled: 1
   movementLocked: 0
+  allowUIInteraction: 0
   dialoguePrefab: {fileID: 8331994361790830585, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
 --- !u!143 &1759951701
 CharacterController:

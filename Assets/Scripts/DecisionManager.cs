@@ -11,6 +11,8 @@ public class DecisionManager : MonoBehaviour
     [Header("Decision Options")]
     public List<DecisionOption> decisions = new List<DecisionOption>();
     
+    private bool decisionMade = false;
+    
     [System.Serializable]
     public class DecisionOption
     {
@@ -30,18 +32,55 @@ public class DecisionManager : MonoBehaviour
     
     public void ShowDecisions()
     {
+        Debug.Log("ShowDecisions() called - Stack trace:");
+        Debug.Log(System.Environment.StackTrace);
+        
+        // Don't show decisions if already made
+        if (decisionMade)
+        {
+            Debug.Log("Decision already made, not showing buttons again");
+            return;
+        }
+        
         if (decisionPanel != null)
         {
             decisionPanel.SetActive(true);
             SetupDecisionButtons();
-            Debug.Log("Decision panel shown with choices");
+            
+            // Enable UI interaction in PlayerController
+            PlayerController playerController = FindObjectOfType<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.EnableUIInteraction();
+            }
+            
+            // Change cursor to free mode for UI interaction
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            
+            // Debug UI setup
+            UnityEngine.EventSystems.EventSystem eventSystem = UnityEngine.EventSystems.EventSystem.current;
+            Debug.Log($"EventSystem found: {eventSystem != null}");
+            
+            Canvas canvas = decisionPanel.GetComponentInParent<Canvas>();
+            if (canvas != null)
+            {
+                GraphicRaycaster raycaster = canvas.GetComponent<GraphicRaycaster>();
+                Debug.Log($"Canvas found: {canvas.name}, GraphicRaycaster: {raycaster != null}");
+            }
+            
+            Debug.Log("Decision panel shown with choices - cursor confined for UI interaction");
         }
     }
     
     void SetupDecisionButtons()
     {
+        Debug.Log($"SetupDecisionButtons called - Decisions count: {decisions.Count}, DecisionButtons count: {decisionButtons.Count}");
+        
         // Make sure we have enough buttons for the decisions
         int decisionsCount = Mathf.Min(decisions.Count, decisionButtons.Count);
+        
+        Debug.Log($"Will setup {decisionsCount} buttons");
         
         // Set up each button with corresponding decision
         for (int i = 0; i < decisionsCount; i++)
@@ -77,7 +116,14 @@ public class DecisionManager : MonoBehaviour
                 string choiceId = option.choiceId;
                 string choiceText = option.choiceText;
                 string sceneName = option.targetScene;
-                button.onClick.AddListener(() => OnDecisionMade(choiceId, choiceText, sceneName));
+                
+                // Add debug logging
+                button.onClick.AddListener(() => {
+                    Debug.Log($"Button clicked: {choiceText}");
+                    OnDecisionMade(choiceId, choiceText, sceneName);
+                });
+                
+                Debug.Log($"Setup button {i}: '{choiceText}' - Button active: {button.gameObject.activeInHierarchy}");
             }
         }
         
@@ -87,13 +133,19 @@ public class DecisionManager : MonoBehaviour
             if (decisionButtons[i] != null)
             {
                 decisionButtons[i].gameObject.SetActive(false);
+                Debug.Log($"Hiding unused button {i}: {decisionButtons[i].name}");
             }
         }
+        
+        Debug.Log($"Button setup complete. {decisionsCount} buttons should now be visible.");
     }
     
     public void OnDecisionMade(string choiceId, string choiceText, string targetScene)
     {
-        Debug.Log($"Player chose: {choiceText} -> {targetScene}");
+        Debug.Log($"OnDecisionMade called - Player chose: {choiceText} -> {targetScene}");
+        
+        // Mark decision as made to prevent showing buttons again
+        decisionMade = true;
         
         // Record the choice
         if (PlayerChoiceTracker.Instance != null)
@@ -101,21 +153,43 @@ public class DecisionManager : MonoBehaviour
             PlayerChoiceTracker.Instance.RecordChoice(choiceId, choiceText, targetScene);
         }
         
-        // Hide decision panel
-        if (decisionPanel != null)
+        // Disable UI interaction in PlayerController
+        PlayerController playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
         {
-            decisionPanel.SetActive(false);
+            playerController.DisableUIInteraction();
         }
         
-        // Transition to chosen scene
-        if (SceneTransitionManager.Instance != null)
+        // Return cursor to locked state
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        // Hide decision buttons but keep panel active
+        foreach (Button button in decisionButtons)
         {
-            SceneTransitionManager.Instance.TransitionToScene(targetScene);
+            if (button != null)
+            {
+                button.gameObject.SetActive(false);
+                Debug.Log($"Hiding button: {button.name}");
+            }
+        }
+        Debug.Log("All decision buttons hidden after choice made");
+        
+        // Show next dialogue line
+        ShowNextDialogueLine();
+    }
+    
+    void ShowNextDialogueLine()
+    {
+        // Find DialogueManager and show the ID verification text
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ShowIDVerificationDialogue();
         }
         else
         {
-            // Fallback direct scene load
-            UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene);
+            Debug.LogWarning("DialogueManager not found for next dialogue line");
         }
     }
     
@@ -125,6 +199,17 @@ public class DecisionManager : MonoBehaviour
         {
             decisionPanel.SetActive(false);
         }
+        
+        // Disable UI interaction in PlayerController
+        PlayerController playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.DisableUIInteraction();
+        }
+        
+        // Return cursor to locked state
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         
         // Hide all decision buttons
         foreach (Button button in decisionButtons)
@@ -139,6 +224,7 @@ public class DecisionManager : MonoBehaviour
     // Call this method to trigger the decision system
     public void TriggerDecision()
     {
+        Debug.Log("TriggerDecision() called");
         ShowDecisions();
     }
 }

@@ -43,18 +43,29 @@ public class DialogueManager : MonoBehaviour
     System.Collections.IEnumerator TriggerDecisionAfterDelay()
     {
         // Wait a few seconds for player to read the text
+        Debug.Log("Starting 3 second delay before showing decisions");
         yield return new WaitForSeconds(3f);
+        
+        Debug.Log("3 seconds passed, looking for DecisionManager");
         
         // Find and trigger decision manager
         DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
         if (decisionManager != null)
         {
+            Debug.Log("DecisionManager found, calling TriggerDecision()");
             decisionManager.TriggerDecision();
         }
         else
         {
             Debug.LogWarning("DecisionManager not found in scene");
         }
+    }
+    
+    public void ShowIDVerificationDialogue()
+    {
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Please provide a form of identification to verify your presence at the train station today. Time is critical. Please cooperate for your safety and others.";
+        Debug.Log("Showing ID verification dialogue");
     }
     
     public void StartDialogue()
