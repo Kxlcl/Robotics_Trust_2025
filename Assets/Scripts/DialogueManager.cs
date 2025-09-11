@@ -91,6 +91,24 @@ public class DialogueManager : MonoBehaviour
         }
     }
     
+    public void ShowFollowDialogue()
+    {
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Thank you for your cooperation. Please follow me and the other passengers in my group to be escorted to a safe area.";
+        Debug.Log("Showing follow dialogue after yes choice");
+        
+        // Hide dialogue after 5 seconds
+        StartCoroutine(HideDialogueAfterDelay());
+    }
+    
+    System.Collections.IEnumerator HideDialogueAfterDelay()
+    {
+        yield return new WaitForSeconds(5f);
+        
+        dialoguePanel.SetActive(false);
+        Debug.Log("Dialogue hidden after 5 seconds");
+    }
+    
     public void StartDialogue()
     {
         dialoguePanel.SetActive(true);

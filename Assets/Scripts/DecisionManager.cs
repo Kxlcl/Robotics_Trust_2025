@@ -356,15 +356,36 @@ public class DecisionManager : MonoBehaviour
         }
         Debug.Log("All yes/no decision buttons hidden after choice made");
         
-        // Transition to chosen scene based on yes/no choice
-        if (SceneTransitionManager.Instance != null)
+        // Show different response based on choice
+        if (choiceText.ToLower().Contains("yes"))
         {
-            SceneTransitionManager.Instance.TransitionToScene(targetScene);
+            ShowFollowDialogue();
         }
         else
         {
-            // Fallback direct scene load
-            UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene);
+            // For "No" choice, transition directly to scene
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.TransitionToScene(targetScene);
+            }
+            else
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(targetScene);
+            }
+        }
+    }
+    
+    void ShowFollowDialogue()
+    {
+        // Find DialogueManager and show the follow message
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ShowFollowDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found for follow dialogue");
         }
     }
     
