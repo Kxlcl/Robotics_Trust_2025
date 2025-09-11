@@ -21,6 +21,20 @@ public class DialogueManager : MonoBehaviour
     {
         LoadDialogue();
         // Canvas stays active - dialogue panel will just show empty text if no content
+        
+        // Check if we're in ID_Scene and show appropriate dialogue
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "ID_Scene")
+        {
+            ShowIDSceneDialogue();
+        }
+    }
+    
+    void ShowIDSceneDialogue()
+    {
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Choose a robot to follow.";
+        Debug.Log("Showing ID_Scene dialogue: Choose a robot to follow");
     }
     
     public void StartDialogue()
