@@ -307,18 +307,6 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
---- !u!114 &44534187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 44534178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &47608745 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4465497343168530381, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -2819,18 +2807,6 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
---- !u!114 &752471514
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 752471505}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &760297972
 GameObject:
   m_ObjectHideFlags: 0
@@ -7161,18 +7137,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3640973854861472484, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 44534183}
-    - targetCorrespondingSourceObject: {fileID: 3640973854861472484, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 44534187}
     - targetCorrespondingSourceObject: {fileID: -8472533946331775325, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 752471509}
     - targetCorrespondingSourceObject: {fileID: -8472533946331775325, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 752471510}
-    - targetCorrespondingSourceObject: {fileID: -8472533946331775325, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 752471514}
     - targetCorrespondingSourceObject: {fileID: 6095174529650163136, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1707704003}
@@ -7547,7 +7517,7 @@ PrefabInstance:
       addedObject: {fileID: 2134230317}
     - targetCorrespondingSourceObject: {fileID: 2135726488834484898, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2134230321}
+      addedObject: {fileID: 2134230324}
     - targetCorrespondingSourceObject: {fileID: 8341289313453214727, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2030281921}
@@ -7556,7 +7526,7 @@ PrefabInstance:
       addedObject: {fileID: 2030281922}
     - targetCorrespondingSourceObject: {fileID: 8341289313453214727, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2030281926}
+      addedObject: {fileID: 2030281929}
     - targetCorrespondingSourceObject: {fileID: -5285076791320208002, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
       insertIndex: -1
       addedObject: {fileID: 957765856}
@@ -9202,7 +9172,7 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
---- !u!114 &2030281926
+--- !u!114 &2030281929
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9211,9 +9181,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2030281917}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 0fd10ccb03c0b43c28c9eeaeb112d4b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doorSpeed: 2
 --- !u!1 &2049543449 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 469159790807680827, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -9836,7 +9807,7 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
---- !u!114 &2134230321
+--- !u!114 &2134230324
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9845,9 +9816,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2134230312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff441a20170004a96aa8ac44145a69d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 0fd10ccb03c0b43c28c9eeaeb112d4b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doorSpeed: 2
 --- !u!1 &2135543984 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6074271982822421375, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}

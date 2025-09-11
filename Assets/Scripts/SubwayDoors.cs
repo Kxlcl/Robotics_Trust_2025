@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class SubwayDoors : MonoBehaviour
@@ -7,9 +8,29 @@ public class SubwayDoors : MonoBehaviour
     
     void Start()
     {
-        // Find the dialogue manager and wait for announcement
-        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
-        StartCoroutine(WaitForAnnouncement(dialogueManager));
+        // Check current scene
+        string currentScene = SceneManager.GetActiveScene().name;
+        
+        if (currentScene == "ID_Scene")
+        {
+            // If we're in ID_Scene, doors should already be open
+            OpenDoorsInstantly();
+            Debug.Log("ID_Scene detected - doors opened immediately");
+        }
+        else
+        {
+            // Find the dialogue manager and wait for announcement
+            DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+            if (dialogueManager != null)
+            {
+                StartCoroutine(WaitForAnnouncement(dialogueManager));
+                Debug.Log("DialogueManager found, waiting for announcement");
+            }
+            else
+            {
+                Debug.LogError("DialogueManager not found in Start_Scene!");
+            }
+        }
     }
     
     IEnumerator WaitForAnnouncement(DialogueManager dialogueManager)
@@ -27,6 +48,10 @@ public class SubwayDoors : MonoBehaviour
         
         // Open doors
         OpenDoors();
+        
+        // Wait a bit then transition to ID_Scene
+        yield return new WaitForSeconds(2f);
+        TransitionToIDScene();
     }
     
     void OpenDoors()
@@ -40,6 +65,19 @@ public class SubwayDoors : MonoBehaviour
         // Move doors
         MoveDoor("Door1_Left", Vector3.left * 3f);
         MoveDoor("Door1_Right", Vector3.right * 3f);
+    }
+    
+    void OpenDoorsInstantly()
+    {
+        Debug.Log("Opening subway doors instantly");
+        
+        // Remove windows
+        DestroyWindow("Part75");
+        DestroyWindow("Part76");
+        
+        // Move doors instantly to open position
+        MoveDoorInstantly("Door1_Left", Vector3.left * 3f);
+        MoveDoorInstantly("Door1_Right", Vector3.right * 3f);
     }
     
     void DestroyWindow(string windowName)
@@ -61,6 +99,21 @@ public class SubwayDoors : MonoBehaviour
         }
     }
     
+    void MoveDoorInstantly(string doorName, Vector3 moveDirection)
+    {
+        GameObject door = GameObject.Find(doorName);
+        if (door != null)
+        {
+            Vector3 newPosition = door.transform.position + moveDirection;
+            door.transform.position = newPosition;
+            Debug.Log($"Door {door.name} instantly moved to {newPosition}");
+        }
+        else
+        {
+            Debug.LogWarning($"Door {doorName} not found for instant movement");
+        }
+    }
+    
     IEnumerator SlideDoor(Transform door, Vector3 moveDirection)
     {
         Vector3 startPos = door.transform.position;
@@ -77,5 +130,11 @@ public class SubwayDoors : MonoBehaviour
         
         door.transform.position = endPos;
         Debug.Log($"Door {door.name} moved to {endPos}");
+    }
+    
+    void TransitionToIDScene()
+    {
+        Debug.Log("Transitioning to ID_Scene");
+        SceneManager.LoadScene("ID_Scene");
     }
 }

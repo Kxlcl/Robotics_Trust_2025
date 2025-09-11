@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -52,8 +53,23 @@ public class PlayerController : MonoBehaviour
             Debug.Log($"Found child camera: {playerCamera.name}");
         }
         
-        // Force cursor to center of screen
-        StartCoroutine(CenterCursorOnStart());
+        // Check current scene
+        string currentScene = SceneManager.GetActiveScene().name;
+        
+        if (currentScene == "Start_Scene")
+        {
+            // Force cursor to center of screen for start menu
+            StartCoroutine(CenterCursorOnStart());
+        }
+        else
+        {
+            // For other scenes (like ID_Scene), start with game already active
+            gameStarted = true;
+            movementEnabled = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Debug.Log($"PlayerController initialized in {currentScene} - game controls active");
+        }
         
         Debug.Log("PlayerController initialized");
     }
