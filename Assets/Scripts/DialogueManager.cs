@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class DialogueManager : MonoBehaviour
@@ -19,7 +20,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         LoadDialogue();
-        dialoguePanel.SetActive(false); // Keep hidden until triggered
+        // Canvas stays active - dialogue panel will just show empty text if no content
     }
     
     public void StartDialogue()
