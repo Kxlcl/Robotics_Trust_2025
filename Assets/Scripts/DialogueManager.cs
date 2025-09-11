@@ -35,6 +35,26 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         dialogueText.text = "Choose a robot to follow.";
         Debug.Log("Showing ID_Scene dialogue: Choose a robot to follow");
+        
+        // Trigger decision system after a delay
+        StartCoroutine(TriggerDecisionAfterDelay());
+    }
+    
+    System.Collections.IEnumerator TriggerDecisionAfterDelay()
+    {
+        // Wait a few seconds for player to read the text
+        yield return new WaitForSeconds(3f);
+        
+        // Find and trigger decision manager
+        DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
+        if (decisionManager != null)
+        {
+            decisionManager.TriggerDecision();
+        }
+        else
+        {
+            Debug.LogWarning("DecisionManager not found in scene");
+        }
     }
     
     public void StartDialogue()
