@@ -66,6 +66,29 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         dialogueText.text = "Please provide a form of identification to verify your presence at the train station today. Time is critical. Please cooperate for your safety and others.";
         Debug.Log("Showing ID verification dialogue");
+        
+        // Trigger yes/no decision after a delay
+        StartCoroutine(TriggerYesNoDecisionAfterDelay());
+    }
+    
+    System.Collections.IEnumerator TriggerYesNoDecisionAfterDelay()
+    {
+        // Wait a few seconds for player to read the ID verification text
+        Debug.Log("Starting delay before showing yes/no decisions");
+        yield return new WaitForSeconds(4f);
+        
+        Debug.Log("Triggering yes/no decision options");
+        
+        // Find and trigger decision manager for yes/no options
+        DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
+        if (decisionManager != null)
+        {
+            decisionManager.ShowYesNoDecisions();
+        }
+        else
+        {
+            Debug.LogWarning("DecisionManager not found for yes/no options");
+        }
     }
     
     public void StartDialogue()

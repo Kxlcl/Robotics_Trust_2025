@@ -2354,7 +2354,7 @@ GameObject:
   - component: {fileID: 617256570}
   - component: {fileID: 617256569}
   m_Layer: 5
-  m_Name: Robot_B
+  m_Name: Right_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2377,8 +2377,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 286.4, y: -90}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 244.7575, y: -77.383}
+  m_SizeDelta: {x: 243.2849, y: 55.234}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &617256569
 MonoBehaviour:
@@ -5789,6 +5789,13 @@ MonoBehaviour:
   - choiceId: robot_b
     choiceText: Follow Robot b
     targetScene: RobotB_Scene
+  yesNoDecisions:
+  - choiceId: provide_id_yes
+    choiceText: Yes
+    targetScene: Compliance_Scene
+  - choiceId: provide_id_no
+    choiceText: No
+    targetScene: Resistance_Scene
 --- !u!4 &1401561183
 Transform:
   m_ObjectHideFlags: 0
@@ -7706,7 +7713,7 @@ GameObject:
   - component: {fileID: 1701380675}
   - component: {fileID: 1701380674}
   m_Layer: 5
-  m_Name: Robot_A
+  m_Name: Left_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7729,8 +7736,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -270, y: -90}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -223.08905, y: -77.38287}
+  m_SizeDelta: {x: 253.8219, y: 55.2342}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1701380674
 MonoBehaviour:
@@ -8106,7 +8113,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Robot A
+  m_text: A
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10125,7 +10132,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Robot B
+  m_text: B
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
