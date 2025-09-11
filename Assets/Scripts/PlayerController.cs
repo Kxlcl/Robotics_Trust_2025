@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
     public bool gameStarted = false;
     public bool movementEnabled = false;
     
+    [Header("ID Scene Movement Lock")]
+    public bool movementLocked = false;
+    
     [Header("Dialogue")]
     public GameObject dialoguePrefab;
     
@@ -65,10 +68,11 @@ public class PlayerController : MonoBehaviour
         {
             // For other scenes (like ID_Scene), start with game already active
             gameStarted = true;
-            movementEnabled = true;
+            movementEnabled = true; // Enable movement immediately in ID_Scene
+            movementLocked = false; // Reset movement lock
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            Debug.Log($"PlayerController initialized in {currentScene} - game controls active");
+            Debug.Log($"PlayerController initialized in {currentScene} - full game controls active");
         }
         
         Debug.Log("PlayerController initialized");
@@ -81,6 +85,7 @@ public class PlayerController : MonoBehaviour
         
         // Keep cursor free for menu interaction until game starts
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         
         Debug.Log("PlayerController ready - waiting for game to start");
     }
@@ -94,34 +99,21 @@ public class PlayerController : MonoBehaviour
         }
         
         // Force cursor to stay locked when game is active
-        if (Cursor.lockState == CursorLockMode.None)
+        if (gameStarted && Cursor.lockState != CursorLockMode.Locked)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            Debug.Log("Forcing cursor back to locked state");
+            Debug.Log($"Forcing cursor lock - was {Cursor.lockState}");
         }
-        
-        // Check if mouse is outside screen bounds
-        Vector3 mousePos = Input.mousePosition;
-        bool mouseOutside = mousePos.x < 0 || mousePos.x > Screen.width || 
-                           mousePos.y < 0 || mousePos.y > Screen.height;
-        
-        // If mouse just returned from outside, reset to center
-        if (wasMouseOutside && !mouseOutside && Cursor.lockState == CursorLockMode.Confined)
-        {
-            // Reset mouse to center to prevent jumps
-            Cursor.lockState = CursorLockMode.Locked;
-            // Wait one frame then return to confined mode
-            StartCoroutine(ResetToConfinedMode());
-        }
-        
-        wasMouseOutside = mouseOutside;
         
         // Always allow mouse look after game starts
         HandleMouseLook();
         
-        // Only allow movement if specifically enabled
-        if (movementEnabled)
+        // Always apply gravity to keep player grounded
+        ApplyGravity();
+        
+        // Only allow movement if specifically enabled and not locked
+        if (movementEnabled && !movementLocked)
         {
             HandleMovement();
         }
@@ -138,9 +130,8 @@ public class PlayerController : MonoBehaviour
         if (playerCamera == null) return;
         
         // Only process mouse look when cursor is locked
-        if (Cursor.lockState != CursorLockMode.Locked && Cursor.lockState != CursorLockMode.Confined)
+        if (Cursor.lockState != CursorLockMode.Locked)
         {
-            Debug.Log($"Mouse look blocked - Cursor state: {Cursor.lockState}");
             return;
         }
             
@@ -164,6 +155,20 @@ public class PlayerController : MonoBehaviour
         
     }
     
+    void ApplyGravity()
+    {
+        // Apply gravity
+        if (controller.isGrounded)
+        {
+            velocity.y = 0f;
+        }
+        velocity.y += gravity * Time.deltaTime;
+        
+        // Apply gravity movement
+        Vector3 gravityMovement = new Vector3(0, velocity.y, 0);
+        controller.Move(gravityMovement * Time.deltaTime);
+    }
+    
     void HandleMovement()
     {
         // Get input using both methods for compatibility
@@ -183,25 +188,13 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.D)) moveX = 1f;
         }
         
-        
-        // Calculate movement
+        // Calculate horizontal movement only
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
         move = move.normalized * speed;
         
-        // Apply gravity
-        if (controller.isGrounded)
-        {
-            velocity.y = 0f;
-        }
-        velocity.y += gravity * Time.deltaTime;
-        
-        // Combine horizontal movement with vertical velocity
-        move.y = velocity.y;
-        
-        // Move the character
+        // Move the character (horizontal only, gravity handled separately)
         Vector3 finalMovement = move * Time.deltaTime;
         controller.Move(finalMovement);
-        
     }
     
     // Call this from UI buttons to enter FPS mode
@@ -236,13 +229,17 @@ public class PlayerController : MonoBehaviour
         // Wait a frame to ensure UI is done
         yield return null;
         
-        // Force locked mode for reliable mouse look
+        // Force locked mode for reliable mouse look - keeps cursor in center
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
-        // Keep in locked mode for reliable mouse look
-        // yield return null;
-        // Cursor.lockState = CursorLockMode.Confined;
+        // Wait another frame and force lock again if needed
+        yield return null;
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Debug.Log("Had to force cursor lock again");
+        }
         
         Debug.Log($"Cursor state set to: {Cursor.lockState}, Visible: {Cursor.visible}");
     }
@@ -276,5 +273,22 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Movement disabled");
     }
     
+    // Collision detection for Part111
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "Part111")
+        {
+            movementLocked = true;
+            Debug.Log("Player touched Part111 - movement locked");
+        }
+    }
     
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Part111")
+        {
+            movementLocked = true;
+            Debug.Log("Player collided with Part111 - movement locked");
+        }
+    }
 }

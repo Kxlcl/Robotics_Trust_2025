@@ -130,7 +130,15 @@ public class SubwayDoors : MonoBehaviour
     
     void TransitionToIDScene()
     {
-        Debug.Log("Transitioning to ID_Scene");
-        SceneManager.LoadScene("ID_Scene");
+        Debug.Log("Transitioning to ID_Scene with fade");
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.TransitionToScene("ID_Scene");
+        }
+        else
+        {
+            // Fallback to direct load if transition manager not found
+            SceneManager.LoadScene("ID_Scene");
+        }
     }
 }
