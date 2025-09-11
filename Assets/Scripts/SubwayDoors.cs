@@ -13,9 +13,9 @@ public class SubwayDoors : MonoBehaviour
         
         if (currentScene == "ID_Scene")
         {
-            // If we're in ID_Scene, doors should already be open
-            OpenDoorsInstantly();
-            Debug.Log("ID_Scene detected - doors opened immediately");
+            // If we're in ID_Scene, play door opening animation
+            OpenDoors();
+            Debug.Log("ID_Scene detected - playing door opening animation");
         }
         else
         {
@@ -43,14 +43,10 @@ public class SubwayDoors : MonoBehaviour
         
         Debug.Log("Line 8 detected: 'Attention, ladies and gentlemen' - opening doors in 30 seconds");
         
-        // Wait 30 seconds after line 8 appears
-        yield return new WaitForSeconds(30f);
+        // Wait 32 seconds after line 8 appears (for announcement audio to end)
+        yield return new WaitForSeconds(32f);
         
-        // Open doors
-        OpenDoors();
-        
-        // Wait a bit then transition to ID_Scene
-        yield return new WaitForSeconds(2f);
+        // Transition to ID_Scene where doors will open
         TransitionToIDScene();
     }
     
