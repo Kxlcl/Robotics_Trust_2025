@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
         
         if (currentScene == "Start_Scene")
         {
-            // Force cursor to center of screen for start menu
+            // In Start_Scene, allow looking but no movement initially
             StartCoroutine(CenterCursorOnStart());
         }
         else
@@ -220,15 +220,15 @@ public class PlayerController : MonoBehaviour
     public void StartGame()
     {
         gameStarted = true;
-        movementEnabled = true; // Enable movement immediately
+        movementEnabled = false; // Keep movement disabled in Start_Scene
         
-        // Force cursor to confined mode for free roam
+        // Force cursor to locked mode for mouse look only
         StartCoroutine(EnableConfinedMode());
         
         // Trigger dialogue system
         TriggerStartDialogue();
         
-        Debug.Log("Game started - Movement and camera enabled, confined mode active");
+        Debug.Log("Game started - Camera enabled, movement disabled for Start_Scene");
     }
     
     System.Collections.IEnumerator EnableConfinedMode()
