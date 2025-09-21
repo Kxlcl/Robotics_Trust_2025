@@ -128,6 +128,14 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         Debug.Log("Player repositioned, transitioning to Waiting_Scene");
         
+        // Create SceneTransitionManager if it doesn't exist
+        if (SceneTransitionManager.Instance == null)
+        {
+            Debug.Log("SceneTransitionManager not found, creating one");
+            GameObject transitionManagerObj = new GameObject("SceneTransitionManager");
+            transitionManagerObj.AddComponent<SceneTransitionManager>();
+        }
+        
         // Transition to Waiting_Scene
         if (SceneTransitionManager.Instance != null)
         {
@@ -136,6 +144,7 @@ public class DialogueManager : MonoBehaviour
         else
         {
             // Fallback direct scene load
+            Debug.LogWarning("Failed to create SceneTransitionManager, using direct scene load");
             UnityEngine.SceneManagement.SceneManager.LoadScene("Waiting_Scene");
         }
     }
@@ -169,6 +178,14 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         Debug.Log("Dialogue hidden, transitioning to Waiting_Scene");
         
+        // Create SceneTransitionManager if it doesn't exist
+        if (SceneTransitionManager.Instance == null)
+        {
+            Debug.Log("SceneTransitionManager not found, creating one");
+            GameObject transitionManagerObj = new GameObject("SceneTransitionManager");
+            transitionManagerObj.AddComponent<SceneTransitionManager>();
+        }
+        
         // Transition to Waiting_Scene
         if (SceneTransitionManager.Instance != null)
         {
@@ -177,6 +194,7 @@ public class DialogueManager : MonoBehaviour
         else
         {
             // Fallback direct scene load
+            Debug.LogWarning("Failed to create SceneTransitionManager, using direct scene load");
             UnityEngine.SceneManagement.SceneManager.LoadScene("Waiting_Scene");
         }
     }

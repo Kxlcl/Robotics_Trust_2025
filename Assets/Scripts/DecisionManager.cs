@@ -15,6 +15,8 @@ public class DecisionManager : MonoBehaviour
     private bool robotDecisionMade = false;
     private bool yesNoDecisionMade = false;
     private bool isSecondChance = false;
+    private bool awaitingKeyInput = false;
+    private List<DecisionOption> currentOptions = new List<DecisionOption>();
     
     [System.Serializable]
     public class DecisionOption
@@ -46,6 +48,41 @@ public class DecisionManager : MonoBehaviour
         }
     }
     
+    void Update()
+    {
+        if (awaitingKeyInput && currentOptions.Count >= 2)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                SelectOption(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                SelectOption(1);
+            }
+        }
+    }
+    
+    private void SelectOption(int optionIndex)
+    {
+        if (optionIndex < currentOptions.Count)
+        {
+            DecisionOption selectedOption = currentOptions[optionIndex];
+            awaitingKeyInput = false;
+            currentOptions.Clear();
+            
+            // Determine which type of decision this is based on current state
+            if (robotDecisionMade == false)
+            {
+                OnDecisionMade(selectedOption.choiceId, selectedOption.choiceText, selectedOption.targetScene);
+            }
+            else
+            {
+                OnYesNoDecisionMade(selectedOption.choiceId, selectedOption.choiceText, selectedOption.targetScene);
+            }
+        }
+    }
+    
     public void ShowDecisions()
     {
         Debug.Log("ShowDecisions() called - Stack trace:");
@@ -61,18 +98,16 @@ public class DecisionManager : MonoBehaviour
         if (decisionPanel != null)
         {
             decisionPanel.SetActive(true);
-            SetupDecisionButtons();
+            SetupDecisionDisplay();
             
-            // Enable UI interaction in PlayerController
-            PlayerController playerController = FindObjectOfType<PlayerController>();
-            if (playerController != null)
-            {
-                playerController.EnableUIInteraction();
-            }
+            // Set up key input
+            currentOptions.Clear();
+            currentOptions.AddRange(decisions);
+            awaitingKeyInput = true;
             
-            // Change cursor to free mode for UI interaction
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            // Keep cursor locked since we're using keyboard input
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             
             // Debug UI setup
             UnityEngine.EventSystems.EventSystem eventSystem = UnityEngine.EventSystems.EventSystem.current;
@@ -88,25 +123,39 @@ public class DecisionManager : MonoBehaviour
             Debug.Log("Decision panel shown with choices - cursor confined for UI interaction");
             
             // Start timer when decisions appear
-            if (GlobalTimer.Instance != null && GlobalTimer.Instance.timerText != null)
+            if (GlobalTimer.Instance != null)
             {
-                GlobalTimer.Instance.timerStarted = true;
-                GlobalTimer.Instance.timerText.gameObject.SetActive(true);
-                Debug.Log("Timer started when decisions appeared");
+                // Make sure GlobalTimer has the correct UI reference for this scene
+                if (GlobalTimer.Instance.timerText == null)
+                {
+                    Debug.Log("GlobalTimer.timerText is null, attempting to find timer UI");
+                    GlobalTimer.Instance.FindTimerUI();
+                }
+                
+                if (GlobalTimer.Instance.timerText != null)
+                {
+                    GlobalTimer.Instance.timerStarted = true;
+                    GlobalTimer.Instance.timerText.gameObject.SetActive(true);
+                    Debug.Log("Timer started when decisions appeared");
+                }
+                else
+                {
+                    Debug.LogWarning("Could not find timer UI element to start timer");
+                }
             }
         }
     }
     
-    void SetupDecisionButtons()
+    void SetupDecisionDisplay()
     {
-        Debug.Log($"SetupDecisionButtons called - Decisions count: {decisions.Count}, DecisionButtons count: {decisionButtons.Count}");
+        Debug.Log($"SetupDecisionDisplay called - Decisions count: {decisions.Count}, DecisionButtons count: {decisionButtons.Count}");
         
         // Make sure we have enough buttons for the decisions
         int decisionsCount = Mathf.Min(decisions.Count, decisionButtons.Count);
         
-        Debug.Log($"Will setup {decisionsCount} buttons");
+        Debug.Log($"Will setup {decisionsCount} options for key selection");
         
-        // Set up each button with corresponding decision
+        // Set up each button display (no click listeners needed)
         for (int i = 0; i < decisionsCount; i++)
         {
             DecisionOption option = decisions[i];
@@ -117,37 +166,29 @@ public class DecisionManager : MonoBehaviour
                 // Show the button
                 button.gameObject.SetActive(true);
                 
-                // Set button text
+                // Set button text with key indicator
                 Text buttonText = button.GetComponentInChildren<Text>();
+                string keyText = i == 0 ? "(Q) " : "(E) ";
+                string displayText = keyText + option.choiceText;
+                
                 if (buttonText == null)
                 {
                     // Try TextMeshPro if regular Text not found
                     TMPro.TextMeshProUGUI tmpText = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (tmpText != null)
                     {
-                        tmpText.text = option.choiceText;
+                        tmpText.text = displayText;
                     }
                 }
                 else
                 {
-                    buttonText.text = option.choiceText;
+                    buttonText.text = displayText;
                 }
                 
-                // Clear existing listeners and add new one
+                // Remove all click listeners since we're using keys
                 button.onClick.RemoveAllListeners();
                 
-                // Capture variables for closure
-                string choiceId = option.choiceId;
-                string choiceText = option.choiceText;
-                string sceneName = option.targetScene;
-                
-                // Add debug logging
-                button.onClick.AddListener(() => {
-                    Debug.Log($"Button clicked: {choiceText}");
-                    OnDecisionMade(choiceId, choiceText, sceneName);
-                });
-                
-                Debug.Log($"Setup button {i}: '{choiceText}' - Button active: {button.gameObject.activeInHierarchy}");
+                Debug.Log($"Setup option {i}: '{displayText}' - Press {(i == 0 ? "Q" : "E")} to select");
             }
         }
         
@@ -161,7 +202,7 @@ public class DecisionManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"Button setup complete. {decisionsCount} buttons should now be visible.");
+        Debug.Log($"Display setup complete. {decisionsCount} options shown. Press Q or E to select.");
     }
     
     public void OnDecisionMade(string choiceId, string choiceText, string targetScene)
@@ -176,17 +217,6 @@ public class DecisionManager : MonoBehaviour
         {
             PlayerChoiceTracker.Instance.RecordChoice(choiceId, choiceText, targetScene);
         }
-        
-        // Disable UI interaction in PlayerController
-        PlayerController playerController = FindObjectOfType<PlayerController>();
-        if (playerController != null)
-        {
-            playerController.DisableUIInteraction();
-        }
-        
-        // Return cursor to locked state
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
         
         // Hide decision buttons but keep panel active
         foreach (Button button in decisionButtons)
@@ -224,16 +254,8 @@ public class DecisionManager : MonoBehaviour
             decisionPanel.SetActive(false);
         }
         
-        // Disable UI interaction in PlayerController
-        PlayerController playerController = FindObjectOfType<PlayerController>();
-        if (playerController != null)
-        {
-            playerController.DisableUIInteraction();
-        }
-        
-        // Return cursor to locked state
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        awaitingKeyInput = false;
+        currentOptions.Clear();
         
         // Hide all decision buttons
         foreach (Button button in decisionButtons)
@@ -259,33 +281,27 @@ public class DecisionManager : MonoBehaviour
         if (decisionPanel != null)
         {
             decisionPanel.SetActive(true);
-            SetupYesNoButtons();
+            SetupYesNoDisplay();
             
-            // Enable UI interaction in PlayerController
-            PlayerController playerController = FindObjectOfType<PlayerController>();
-            if (playerController != null)
-            {
-                playerController.EnableUIInteraction();
-            }
+            // Set up key input for yes/no decisions
+            currentOptions.Clear();
+            currentOptions.AddRange(yesNoDecisions);
+            awaitingKeyInput = true;
             
-            // Change cursor to free mode for UI interaction
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            
-            Debug.Log("Yes/No decision panel shown");
+            Debug.Log("Yes/No decision panel shown - Press Q or E to select");
         }
     }
     
-    void SetupYesNoButtons()
+    void SetupYesNoDisplay()
     {
-        Debug.Log($"SetupYesNoButtons called - YesNoDecisions count: {yesNoDecisions.Count}, DecisionButtons count: {decisionButtons.Count}");
+        Debug.Log($"SetupYesNoDisplay called - YesNoDecisions count: {yesNoDecisions.Count}, DecisionButtons count: {decisionButtons.Count}");
         
         // Make sure we have enough buttons for the yes/no decisions
         int decisionsCount = Mathf.Min(yesNoDecisions.Count, decisionButtons.Count);
         
-        Debug.Log($"Will setup {decisionsCount} yes/no buttons");
+        Debug.Log($"Will setup {decisionsCount} yes/no options for key selection");
         
-        // Set up each button with corresponding yes/no decision
+        // Set up each button display for yes/no decision
         for (int i = 0; i < decisionsCount; i++)
         {
             DecisionOption option = yesNoDecisions[i];
@@ -296,37 +312,29 @@ public class DecisionManager : MonoBehaviour
                 // Show the button
                 button.gameObject.SetActive(true);
                 
-                // Set button text
+                // Set button text with key indicator
                 Text buttonText = button.GetComponentInChildren<Text>();
+                string keyText = i == 0 ? "(Q) " : "(E) ";
+                string displayText = keyText + option.choiceText;
+                
                 if (buttonText == null)
                 {
                     // Try TextMeshPro if regular Text not found
                     TMPro.TextMeshProUGUI tmpText = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (tmpText != null)
                     {
-                        tmpText.text = option.choiceText;
+                        tmpText.text = displayText;
                     }
                 }
                 else
                 {
-                    buttonText.text = option.choiceText;
+                    buttonText.text = displayText;
                 }
                 
-                // Clear existing listeners and add new one
+                // Remove all click listeners since we're using keys
                 button.onClick.RemoveAllListeners();
                 
-                // Capture variables for closure
-                string choiceId = option.choiceId;
-                string choiceText = option.choiceText;
-                string sceneName = option.targetScene;
-                
-                // Add debug logging
-                button.onClick.AddListener(() => {
-                    Debug.Log($"Yes/No Button clicked: {choiceText}");
-                    OnYesNoDecisionMade(choiceId, choiceText, sceneName);
-                });
-                
-                Debug.Log($"Setup yes/no button {i}: '{choiceText}' - Button active: {button.gameObject.activeInHierarchy}");
+                Debug.Log($"Setup yes/no option {i}: '{displayText}' - Press {(i == 0 ? "Q" : "E")} to select");
             }
         }
         
@@ -340,7 +348,7 @@ public class DecisionManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"Yes/No button setup complete. {decisionsCount} buttons should now be visible.");
+        Debug.Log($"Yes/No display setup complete. {decisionsCount} options shown. Press Q or E to select.");
     }
     
     public void OnYesNoDecisionMade(string choiceId, string choiceText, string targetScene)
@@ -355,17 +363,6 @@ public class DecisionManager : MonoBehaviour
         {
             PlayerChoiceTracker.Instance.RecordChoice(choiceId, choiceText, targetScene);
         }
-        
-        // Disable UI interaction in PlayerController
-        PlayerController playerController = FindObjectOfType<PlayerController>();
-        if (playerController != null)
-        {
-            playerController.DisableUIInteraction();
-        }
-        
-        // Return cursor to locked state
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
         
         // Hide decision buttons
         foreach (Button button in decisionButtons)
@@ -440,20 +437,14 @@ public class DecisionManager : MonoBehaviour
         if (decisionPanel != null)
         {
             decisionPanel.SetActive(true);
-            SetupYesNoButtons();
+            SetupYesNoDisplay();
             
-            // Enable UI interaction in PlayerController
-            PlayerController playerController = FindObjectOfType<PlayerController>();
-            if (playerController != null)
-            {
-                playerController.EnableUIInteraction();
-            }
+            // Set up key input for second chance yes/no decisions
+            currentOptions.Clear();
+            currentOptions.AddRange(yesNoDecisions);
+            awaitingKeyInput = true;
             
-            // Change cursor to free mode for UI interaction
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            
-            Debug.Log("Second chance Yes/No decision panel shown");
+            Debug.Log("Second chance Yes/No decision panel shown - Press Q or E to select");
         }
     }
     
@@ -469,16 +460,15 @@ public class DecisionManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("GameOverManager not found - falling back to scene transition");
-            // Fallback to scene transition if GameOverManager not found
-            if (SceneTransitionManager.Instance != null)
-            {
-                SceneTransitionManager.Instance.TransitionToScene("Survey_Scene");
-            }
-            else
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Survey_Scene");
-            }
+            Debug.LogWarning("GameOverManager not found - falling back to direct survey redirect");
+            
+            // Fallback: redirect directly to survey if GameOverManager not found
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Call the same JavaScript function that GameOverManager uses
+            Application.ExternalEval("window.location.href = 'survey.html';");
+#else
+            Debug.Log("Survey redirect would happen here (WebGL only)");
+#endif
         }
     }
     

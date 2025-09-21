@@ -30,6 +30,8 @@ public class GlobalTimer : MonoBehaviour
     
     void Start()
     {
+        // Find timer UI element in current scene
+        FindTimerUI();
         // Check if we should start the timer
         CheckSceneAndStartTimer();
     }
@@ -46,9 +48,49 @@ public class GlobalTimer : MonoBehaviour
     
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Re-find timer UI element in new scene
+        FindTimerUI();
         CheckSceneAndStartTimer();
     }
     
+    public void FindTimerUI()
+    {
+        // Find timer UI element in current scene
+        TextMeshProUGUI[] allTimerTexts = FindObjectsOfType<TextMeshProUGUI>();
+        foreach (TextMeshProUGUI text in allTimerTexts)
+        {
+            // Look for timer UI by name or tag - assuming it's named "Timer" or has specific properties
+            if (text.name.ToLower().Contains("timer") || text.gameObject.name.ToLower().Contains("timer"))
+            {
+                timerText = text;
+                Debug.Log($"Found timer UI: {text.name} in {SceneManager.GetActiveScene().name}");
+                break;
+            }
+        }
+        
+        // If we still don't have a timer reference, try to find by GameObject name pattern
+        if (timerText == null)
+        {
+            GameObject timerObj = GameObject.Find("Timer");
+            if (timerObj == null) timerObj = GameObject.Find("TimerText");
+            if (timerObj == null) timerObj = GameObject.Find("TimeDisplay");
+            
+            if (timerObj != null)
+            {
+                timerText = timerObj.GetComponent<TextMeshProUGUI>();
+                if (timerText != null)
+                {
+                    Debug.Log($"Found timer UI by GameObject search: {timerObj.name}");
+                }
+            }
+        }
+        
+        if (timerText == null)
+        {
+            Debug.LogWarning($"Could not find timer UI in {SceneManager.GetActiveScene().name}");
+        }
+    }
+
     void CheckSceneAndStartTimer()
     {
         string currentScene = SceneManager.GetActiveScene().name;

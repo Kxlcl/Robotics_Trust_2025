@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour
     public bool movementLocked = false;
     public bool allowUIInteraction = false;
     
+    [Header("Waiting Scene Settings")]
+    public bool isInWaitingScene = false;
+    public Vector3 waitingPosition = new Vector3(134f, 0f, -101f);
+    
     [Header("Dialogue")]
     public GameObject dialoguePrefab;
     
@@ -59,11 +63,27 @@ public class PlayerController : MonoBehaviour
         
         // Check current scene
         string currentScene = SceneManager.GetActiveScene().name;
+        Debug.Log($"PlayerController Start() - Current scene: '{currentScene}'");
         
         if (currentScene == "Start_Scene")
         {
             // In Start_Scene, allow looking but no movement initially
             StartCoroutine(CenterCursorOnStart());
+        }
+        else if (currentScene == "Waiting_Scene" || currentScene.ToLower().Contains("waiting"))
+        {
+            // In Waiting_Scene, teleport player and keep them locked in position
+            gameStarted = true;
+            movementEnabled = false; // Disable movement in waiting scene
+            movementLocked = true; // Lock movement completely
+            isInWaitingScene = true; // Mark as being in waiting scene
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            
+            // Teleport player to specified coordinates with delay
+            StartCoroutine(DelayedTeleportToWaitingPosition());
+            
+            Debug.Log($"PlayerController initialized in {currentScene} - will teleport to waiting position, movement locked");
         }
         else
         {
@@ -118,6 +138,15 @@ public class PlayerController : MonoBehaviour
         {
             HandleMovement();
         }
+        
+        // In waiting scene, ensure player stays at the waiting position
+        if (isInWaitingScene)
+        {
+            EnforceWaitingPosition();
+            
+            // Additional aggressive positioning for first few seconds
+            ForceTeleportToWaitingPosition();
+        }
     }
     
     System.Collections.IEnumerator ResetToConfinedMode()
@@ -168,6 +197,9 @@ public class PlayerController : MonoBehaviour
     
     void ApplyGravity()
     {
+        // Only apply gravity if controller exists and is enabled
+        if (controller == null || !controller.enabled) return;
+        
         // Apply gravity
         if (controller.isGrounded)
         {
@@ -182,6 +214,9 @@ public class PlayerController : MonoBehaviour
     
     void HandleMovement()
     {
+        // Only handle movement if controller exists and is enabled
+        if (controller == null || !controller.enabled) return;
+        
         // Get input using both methods for compatibility
         float moveX = 0f;
         float moveZ = 0f;
@@ -313,6 +348,275 @@ public class PlayerController : MonoBehaviour
         {
             movementLocked = true;
             Debug.Log("Player collided with Part111 - movement locked");
+        }
+    }
+    
+    private System.Collections.IEnumerator DelayedTeleportToWaitingPosition()
+    {
+        // Wait a few frames for scene to fully load
+        yield return null;
+        yield return null;
+        yield return null;
+        
+        // First teleportation attempt
+        TeleportToWaitingPosition();
+        
+        // Wait another frame and try again to ensure it sticks
+        yield return null;
+        TeleportToWaitingPosition();
+        
+        // One more attempt after a short delay
+        yield return new WaitForSeconds(0.1f);
+        TeleportToWaitingPosition();
+        
+        Debug.Log("Completed multiple teleportation attempts");
+    }
+    
+    private void TeleportToWaitingPosition()
+    {
+        // Keep the same Y coordinate from ID scene
+        waitingPosition = new Vector3(134f, transform.position.y, -101f);
+        
+        Debug.Log($"=== TELEPORTATION ATTEMPT ===");
+        Debug.Log($"GameObject name: {gameObject.name}");
+        Debug.Log($"Transform name: {transform.name}");
+        Debug.Log($"Parent: {(transform.parent != null ? transform.parent.name : "None")}");
+        Debug.Log($"Children count: {transform.childCount}");
+        if (transform.childCount > 0)
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Debug.Log($"Child {i}: {transform.GetChild(i).name}");
+            }
+        }
+        Debug.Log($"Controller exists: {controller != null}");
+        Debug.Log($"Controller enabled: {(controller != null ? controller.enabled.ToString() : "N/A")}");
+        Debug.Log($"Before teleport position: {transform.position}");
+        Debug.Log($"Target waiting position: {waitingPosition}");
+        
+        // Find the firstperson GameObject specifically
+        GameObject firstPersonObject = GameObject.Find("firstperson");
+        if (firstPersonObject == null)
+        {
+            // Try alternative names
+            firstPersonObject = GameObject.Find("FirstPerson");
+            if (firstPersonObject == null)
+            {
+                firstPersonObject = GameObject.Find("First Person");
+                if (firstPersonObject == null)
+                {
+                    // Search through all objects for one containing "firstperson" in name
+                    GameObject[] allObjects = FindObjectsOfType<GameObject>();
+                    foreach (GameObject obj in allObjects)
+                    {
+                        if (obj.name.ToLower().Contains("firstperson") || obj.name.ToLower().Contains("first person"))
+                        {
+                            firstPersonObject = obj;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        Debug.Log($"FirstPerson object found: {(firstPersonObject != null ? firstPersonObject.name : "NOT FOUND")}");
+        if (firstPersonObject != null)
+        {
+            Debug.Log($"FirstPerson position before teleport: {firstPersonObject.transform.position}");
+        }
+        
+        // Also check for other player-related objects
+        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log($"Found {allPlayers.Length} objects with Player tag");
+        foreach (GameObject player in allPlayers)
+        {
+            Debug.Log($"Player object: {player.name} at position {player.transform.position}");
+        }
+        
+        // PRIORITY: Move the firstperson object if found
+        if (firstPersonObject != null)
+        {
+            Debug.Log("PRIORITY TELEPORT: Moving firstperson object...");
+            
+            // Check if firstperson has a CharacterController
+            CharacterController firstPersonController = firstPersonObject.GetComponent<CharacterController>();
+            if (firstPersonController != null)
+            {
+                Debug.Log("FirstPerson has CharacterController - disabling for teleport");
+                firstPersonController.enabled = false;
+                firstPersonObject.transform.position = waitingPosition;
+                firstPersonController.enabled = true;
+            }
+            else
+            {
+                Debug.Log("FirstPerson direct teleport");
+                firstPersonObject.transform.position = waitingPosition;
+            }
+            
+            Debug.Log($"FirstPerson teleported to: {firstPersonObject.transform.position}");
+        }
+        
+        // Also try the regular teleportation methods as backup
+        if (controller != null)
+        {
+            Debug.Log("BACKUP: Attempting teleportation with CharacterController method...");
+            controller.enabled = false;
+            transform.position = waitingPosition;
+            
+            // Also try to move any parent or root object
+            if (transform.root != transform)
+            {
+                Debug.Log($"Also moving root object: {transform.root.name}");
+                transform.root.position = waitingPosition;
+            }
+            
+            // Wait a bit before re-enabling
+            StartCoroutine(ReEnableController());
+        }
+        else
+        {
+            Debug.Log("BACKUP: Attempting direct transform teleportation...");
+            transform.position = waitingPosition;
+            
+            // Also try to move any parent or root object
+            if (transform.root != transform)
+            {
+                Debug.Log($"Also moving root object: {transform.root.name}");
+                transform.root.position = waitingPosition;
+            }
+        }
+        
+        Debug.Log($"After teleport attempt position: {transform.position}");
+        
+        // Also try teleporting all Player tagged objects
+        foreach (GameObject player in allPlayers)
+        {
+            if (player != gameObject) // Don't double-teleport this object
+            {
+                Debug.Log($"Also teleporting player object: {player.name}");
+                CharacterController playerController = player.GetComponent<CharacterController>();
+                if (playerController != null)
+                {
+                    playerController.enabled = false;
+                    player.transform.position = waitingPosition;
+                    playerController.enabled = true;
+                }
+                else
+                {
+                    player.transform.position = waitingPosition;
+                }
+                Debug.Log($"Player {player.name} moved to: {player.transform.position}");
+            }
+        }
+        
+        // Force a physics update to ensure proper positioning
+        Physics.SyncTransforms();
+        
+        Debug.Log($"After physics sync position: {transform.position}");
+        Debug.Log($"=== END TELEPORTATION ATTEMPT ===");
+    }
+    
+    private System.Collections.IEnumerator ReEnableController()
+    {
+        yield return new WaitForFixedUpdate();
+        if (controller != null)
+        {
+            controller.enabled = true;
+            Debug.Log($"Controller re-enabled. Final position: {transform.position}");
+        }
+    }
+    
+    private void ForceTeleportToWaitingPosition()
+    {
+        // Find the firstperson object for force teleportation
+        GameObject firstPersonObject = GameObject.Find("firstperson");
+        if (firstPersonObject == null)
+        {
+            firstPersonObject = GameObject.Find("FirstPerson");
+            if (firstPersonObject == null)
+            {
+                // Search for any object containing "firstperson" in name
+                GameObject[] allObjects = FindObjectsOfType<GameObject>();
+                foreach (GameObject obj in allObjects)
+                {
+                    if (obj.name.ToLower().Contains("firstperson"))
+                    {
+                        firstPersonObject = obj;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        Vector3 targetPos = new Vector3(134f, transform.position.y, -101f);
+        
+        // PRIORITY: Force teleport the firstperson object
+        if (firstPersonObject != null)
+        {
+            Vector3 firstPersonCurrentPos = firstPersonObject.transform.position;
+            if (Vector3.Distance(firstPersonCurrentPos, targetPos) > 0.1f)
+            {
+                CharacterController firstPersonController = firstPersonObject.GetComponent<CharacterController>();
+                if (firstPersonController != null)
+                {
+                    firstPersonController.enabled = false;
+                    firstPersonObject.transform.position = targetPos;
+                    firstPersonController.enabled = true;
+                }
+                else
+                {
+                    firstPersonObject.transform.position = targetPos;
+                }
+                
+                Debug.Log($"FORCE TELEPORT FIRSTPERSON: Moving from {firstPersonCurrentPos} to {targetPos}");
+            }
+        }
+        
+        // Backup: Also try this object
+        Vector3 currentPos = transform.position;
+        if (Vector3.Distance(currentPos, targetPos) > 0.1f)
+        {
+            if (controller != null)
+            {
+                controller.enabled = false;
+                transform.position = targetPos;
+                controller.enabled = true;
+            }
+            else
+            {
+                transform.position = targetPos;
+            }
+            
+            Debug.Log($"FORCE TELEPORT BACKUP: Moving from {currentPos} to {targetPos}");
+        }
+    }
+    
+    private void EnforceWaitingPosition()
+    {
+        // Check if player has moved too far from waiting position (allowing small Y variance for ground contact)
+        Vector3 currentPos = transform.position;
+        float horizontalDistance = Vector2.Distance(
+            new Vector2(currentPos.x, currentPos.z), 
+            new Vector2(waitingPosition.x, waitingPosition.z)
+        );
+        
+        // If player has moved more than 0.5 units horizontally from waiting position, teleport back
+        if (horizontalDistance > 0.5f)
+        {
+            Vector3 correctedPosition = new Vector3(waitingPosition.x, currentPos.y, waitingPosition.z);
+            
+            if (controller != null)
+            {
+                controller.enabled = false;
+                transform.position = correctedPosition;
+                controller.enabled = true;
+            }
+            else
+            {
+                transform.position = correctedPosition;
+            }
+            
+            Debug.Log($"Player position corrected back to waiting area: {correctedPosition}");
         }
     }
 }

@@ -141,13 +141,23 @@ public class SubwayDoors : MonoBehaviour
     void TransitionToIDScene()
     {
         Debug.Log("Transitioning to ID_Scene with fade");
+        
+        // Create SceneTransitionManager if it doesn't exist
+        if (SceneTransitionManager.Instance == null)
+        {
+            Debug.Log("SceneTransitionManager not found, creating one");
+            GameObject transitionManagerObj = new GameObject("SceneTransitionManager");
+            transitionManagerObj.AddComponent<SceneTransitionManager>();
+        }
+        
         if (SceneTransitionManager.Instance != null)
         {
             SceneTransitionManager.Instance.TransitionToScene("ID_Scene");
         }
         else
         {
-            // Fallback to direct load if transition manager not found
+            // Fallback to direct load if transition manager still not found
+            Debug.LogWarning("Failed to create SceneTransitionManager, using direct scene load");
             SceneManager.LoadScene("ID_Scene");
         }
     }
