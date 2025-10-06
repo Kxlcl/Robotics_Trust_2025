@@ -8,8 +8,8 @@ public class SimpleWaitingManager : MonoBehaviour
         Debug.Log($"SimpleWaitingManager Start() - Current scene: '{currentScene}'");
         Debug.Log("Waiting_Scene loaded - clean state");
         
-        // Hide decision buttons when in waiting scene with delay
-        StartCoroutine(DelayedHideDecisionButtons());
+        // Don't hide decision buttons - they'll be needed for work/wait choices
+        Debug.Log("SimpleWaitingManager ready - DecisionManager will be triggered by PlayerController");
     }
     
     private System.Collections.IEnumerator DelayedHideDecisionButtons()

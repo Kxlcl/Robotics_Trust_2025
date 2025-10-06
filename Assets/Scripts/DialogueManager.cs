@@ -31,9 +31,18 @@ public class DialogueManager : MonoBehaviour
         {
             ShowIDSceneDialogue();
         }
+        else if (currentScene == "Waiting_Scene")
+        {
+            // In Waiting_Scene, keep dialogue hidden until triggered by PlayerController
+            if (dialoguePanel != null)
+            {
+                dialoguePanel.SetActive(false);
+            }
+            Debug.Log($"DialogueManager active in {currentScene} - waiting for trigger");
+        }
         else
         {
-            // In other scenes (like Waiting_Scene), keep dialogue completely hidden
+            // In other scenes, keep dialogue completely hidden
             if (dialoguePanel != null)
             {
                 dialoguePanel.SetActive(false);
@@ -234,6 +243,36 @@ public class DialogueManager : MonoBehaviour
         
         dialoguePanel.SetActive(false);
         Debug.Log("Dialogue hidden after 5 seconds");
+    }
+    
+    public void ShowWaitingSceneDialogue()
+    {
+        Debug.Log("Showing waiting scene dialogue");
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "I really need to get to work...";
+        
+        // Trigger work/wait decision after a delay
+        StartCoroutine(TriggerWorkWaitDecisionAfterDelay());
+    }
+    
+    System.Collections.IEnumerator TriggerWorkWaitDecisionAfterDelay()
+    {
+        // Wait a few seconds for player to read the text
+        Debug.Log("Starting delay before showing work/wait decisions");
+        yield return new WaitForSeconds(3f);
+        
+        Debug.Log("Triggering work/wait decision options");
+        
+        // Find and trigger decision manager for work/wait options
+        DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
+        if (decisionManager != null)
+        {
+            decisionManager.ShowWorkWaitDecisions();
+        }
+        else
+        {
+            Debug.LogWarning("DecisionManager not found for work/wait options");
+        }
     }
     
     public void StartDialogue()

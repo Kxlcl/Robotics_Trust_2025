@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             
-            // Teleport player to specified coordinates with delay
+            // Teleport player to specified coordinates with longer delay to wait for scene transition
             StartCoroutine(DelayedTeleportToWaitingPosition());
             
             Debug.Log($"PlayerController initialized in {currentScene} - will teleport to waiting position, movement locked");
@@ -353,10 +353,9 @@ public class PlayerController : MonoBehaviour
     
     private System.Collections.IEnumerator DelayedTeleportToWaitingPosition()
     {
-        // Wait a few frames for scene to fully load
-        yield return null;
-        yield return null;
-        yield return null;
+        // Wait for scene transition to complete (SceneTransitionManager uses 1s fade duration)
+        Debug.Log("Waiting for scene transition to complete before teleporting...");
+        yield return new WaitForSeconds(2f); // Wait longer than the fade duration
         
         // First teleportation attempt
         TeleportToWaitingPosition();
@@ -514,6 +513,9 @@ public class PlayerController : MonoBehaviour
         
         Debug.Log($"After physics sync position: {transform.position}");
         Debug.Log($"=== END TELEPORTATION ATTEMPT ===");
+        
+        // Trigger waiting scene dialogue after teleportation
+        StartCoroutine(TriggerWaitingSceneDialogue());
     }
     
     private System.Collections.IEnumerator ReEnableController()
@@ -523,6 +525,92 @@ public class PlayerController : MonoBehaviour
         {
             controller.enabled = true;
             Debug.Log($"Controller re-enabled. Final position: {transform.position}");
+        }
+    }
+    
+    private System.Collections.IEnumerator TriggerWaitingSceneDialogue()
+    {
+        // Wait for scene transition + teleportation to complete
+        yield return new WaitForSeconds(3f);
+        
+        // Debug: List all DialogueManager objects in scene (including inactive ones)
+        DialogueManager[] allDialogueManagers = FindObjectsOfType<DialogueManager>(true); // Include inactive
+        Debug.Log($"Found {allDialogueManagers.Length} DialogueManager objects in scene (including inactive)");
+        for (int i = 0; i < allDialogueManagers.Length; i++)
+        {
+            Debug.Log($"DialogueManager {i}: {allDialogueManagers[i].name} (enabled: {allDialogueManagers[i].enabled}, gameObject active: {allDialogueManagers[i].gameObject.activeSelf})");
+        }
+        
+        // Find and trigger the DialogueManager for waiting scene
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager == null)
+        {
+            // Try to find inactive DialogueManager
+            dialogueManager = FindObjectOfType<DialogueManager>(true);
+        }
+        
+        if (dialogueManager != null)
+        {
+            Debug.Log($"Found DialogueManager: {dialogueManager.name} (enabled: {dialogueManager.enabled}) - Triggering waiting scene dialogue");
+            
+            // Enable it if it's disabled
+            if (!dialogueManager.enabled)
+            {
+                Debug.Log("DialogueManager was disabled, enabling it for waiting scene");
+                dialogueManager.enabled = true;
+            }
+            
+            // Make sure GameObject is active
+            if (!dialogueManager.gameObject.activeSelf)
+            {
+                Debug.Log("DialogueManager GameObject was inactive, activating it");
+                dialogueManager.gameObject.SetActive(true);
+            }
+            
+            dialogueManager.ShowWaitingSceneDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found for waiting scene dialogue");
+            
+            // Fallback: Try to find by name
+            GameObject dialogueGO = GameObject.Find("DialogueManager");
+            if (dialogueGO == null)
+            {
+                dialogueGO = GameObject.Find("Dialogue Manager");
+            }
+            if (dialogueGO == null)
+            {
+                // Search for any GameObject with "dialogue" in the name
+                GameObject[] allObjects = FindObjectsOfType<GameObject>();
+                foreach (GameObject obj in allObjects)
+                {
+                    if (obj.name.ToLower().Contains("dialogue"))
+                    {
+                        dialogueGO = obj;
+                        Debug.Log($"Found dialogue-related object: {obj.name}");
+                        break;
+                    }
+                }
+            }
+            
+            if (dialogueGO != null)
+            {
+                DialogueManager foundManager = dialogueGO.GetComponent<DialogueManager>();
+                if (foundManager != null)
+                {
+                    Debug.Log($"Found DialogueManager on {dialogueGO.name} - triggering dialogue");
+                    foundManager.ShowWaitingSceneDialogue();
+                }
+                else
+                {
+                    Debug.LogWarning($"Found {dialogueGO.name} but it has no DialogueManager component");
+                }
+            }
+            else
+            {
+                Debug.LogError("No DialogueManager found anywhere in the scene!");
+            }
         }
     }
     

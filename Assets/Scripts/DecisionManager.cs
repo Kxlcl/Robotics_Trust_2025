@@ -11,6 +11,7 @@ public class DecisionManager : MonoBehaviour
     [Header("Decision Options")]
     public List<DecisionOption> decisions = new List<DecisionOption>();
     public List<DecisionOption> yesNoDecisions = new List<DecisionOption>();
+    public List<DecisionOption> workWaitDecisions = new List<DecisionOption>();
     
     private bool robotDecisionMade = false;
     private bool yesNoDecisionMade = false;
@@ -39,6 +40,15 @@ public class DecisionManager : MonoBehaviour
                 decisionPanel.SetActive(false);
             }
             Debug.Log("DecisionManager active in ID_Scene");
+        }
+        else if (currentScene == "Waiting_Scene")
+        {
+            // In Waiting_Scene, hide decision panel until triggered by dialogue
+            if (decisionPanel != null)
+            {
+                decisionPanel.SetActive(false);
+            }
+            Debug.Log("DecisionManager active in Waiting_Scene - waiting for dialogue trigger");
         }
         else
         {
@@ -71,8 +81,12 @@ public class DecisionManager : MonoBehaviour
             awaitingKeyInput = false;
             currentOptions.Clear();
             
-            // Determine which type of decision this is based on current state
-            if (robotDecisionMade == false)
+            // Determine which type of decision this is based on the selected option
+            if (workWaitDecisions.Contains(selectedOption))
+            {
+                OnWorkWaitDecisionMade(selectedOption.choiceId, selectedOption.choiceText, selectedOption.targetScene);
+            }
+            else if (robotDecisionMade == false)
             {
                 OnDecisionMade(selectedOption.choiceId, selectedOption.choiceText, selectedOption.targetScene);
             }
@@ -121,28 +135,6 @@ public class DecisionManager : MonoBehaviour
             }
             
             Debug.Log("Decision panel shown with choices - cursor confined for UI interaction");
-            
-            // Start timer when decisions appear
-            if (GlobalTimer.Instance != null)
-            {
-                // Make sure GlobalTimer has the correct UI reference for this scene
-                if (GlobalTimer.Instance.timerText == null)
-                {
-                    Debug.Log("GlobalTimer.timerText is null, attempting to find timer UI");
-                    GlobalTimer.Instance.FindTimerUI();
-                }
-                
-                if (GlobalTimer.Instance.timerText != null)
-                {
-                    GlobalTimer.Instance.timerStarted = true;
-                    GlobalTimer.Instance.timerText.gameObject.SetActive(true);
-                    Debug.Log("Timer started when decisions appeared");
-                }
-                else
-                {
-                    Debug.LogWarning("Could not find timer UI element to start timer");
-                }
-            }
         }
     }
     
@@ -469,6 +461,119 @@ public class DecisionManager : MonoBehaviour
 #else
             Debug.Log("Survey redirect would happen here (WebGL only)");
 #endif
+        }
+    }
+    
+    public void ShowWorkWaitDecisions()
+    {
+        Debug.Log("ShowWorkWaitDecisions() called");
+        
+        if (decisionPanel != null)
+        {
+            decisionPanel.SetActive(true);
+            SetupWorkWaitDisplay();
+            
+            // Set up key input for work/wait decisions
+            currentOptions.Clear();
+            currentOptions.AddRange(workWaitDecisions);
+            awaitingKeyInput = true;
+            
+            Debug.Log("Work/Wait decision panel shown - Press Q or E to select");
+        }
+    }
+    
+    void SetupWorkWaitDisplay()
+    {
+        Debug.Log($"SetupWorkWaitDisplay called - WorkWaitDecisions count: {workWaitDecisions.Count}, DecisionButtons count: {decisionButtons.Count}");
+        
+        // Make sure we have enough buttons for the work/wait decisions
+        int decisionsCount = Mathf.Min(workWaitDecisions.Count, decisionButtons.Count);
+        
+        Debug.Log($"Will setup {decisionsCount} work/wait options for key selection");
+        
+        // Set up each button display for work/wait decision
+        for (int i = 0; i < decisionsCount; i++)
+        {
+            DecisionOption option = workWaitDecisions[i];
+            Button button = decisionButtons[i];
+            
+            if (button != null)
+            {
+                // Show the button
+                button.gameObject.SetActive(true);
+                
+                // Set button text with key indicator
+                Text buttonText = button.GetComponentInChildren<Text>();
+                string keyText = i == 0 ? "(Q) " : "(E) ";
+                string displayText = keyText + option.choiceText;
+                
+                if (buttonText == null)
+                {
+                    // Try TextMeshPro if regular Text not found
+                    TMPro.TextMeshProUGUI tmpText = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (tmpText != null)
+                    {
+                        tmpText.text = displayText;
+                    }
+                }
+                else
+                {
+                    buttonText.text = displayText;
+                }
+                
+                // Remove all click listeners since we're using keys
+                button.onClick.RemoveAllListeners();
+                
+                Debug.Log($"Setup work/wait option {i}: '{displayText}' - Press {(i == 0 ? "Q" : "E")} to select");
+            }
+        }
+        
+        // Hide unused buttons
+        for (int i = decisionsCount; i < decisionButtons.Count; i++)
+        {
+            if (decisionButtons[i] != null)
+            {
+                decisionButtons[i].gameObject.SetActive(false);
+                Debug.Log($"Hiding unused work/wait button {i}: {decisionButtons[i].name}");
+            }
+        }
+        
+        Debug.Log($"Work/Wait display setup complete. {decisionsCount} options shown. Press Q or E to select.");
+    }
+    
+    public void OnWorkWaitDecisionMade(string choiceId, string choiceText, string targetScene)
+    {
+        Debug.Log($"OnWorkWaitDecisionMade called - Player chose: {choiceText} -> {targetScene}");
+        
+        // Record the choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice(choiceId, choiceText, targetScene);
+        }
+        
+        // Hide decision buttons
+        foreach (Button button in decisionButtons)
+        {
+            if (button != null)
+            {
+                button.gameObject.SetActive(false);
+                Debug.Log($"Hiding work/wait button: {button.name}");
+            }
+        }
+        Debug.Log("All work/wait decision buttons hidden after choice made");
+        
+        // Handle different choices
+        if (choiceText.ToLower().Contains("ask") || choiceText.ToLower().Contains("work"))
+        {
+            // Player chose to ask about leaving for work
+            Debug.Log("Player chose to ask about leaving for work");
+            // Add your logic here for what happens when they ask about work
+        }
+        else
+        {
+            // Player chose to stay put and wait
+            Debug.Log("Player chose to stay put and wait");
+            // Add your logic here for what happens when they wait
         }
     }
     
