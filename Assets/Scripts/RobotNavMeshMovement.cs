@@ -46,7 +46,7 @@ public class RobotNavMeshMovement : MonoBehaviour
     void OnReachedTarget()
     {
         Debug.Log($"{gameObject.name} reached target position via NavMesh");
-        agent.Stop();
+        agent.isStopped = true;
         // Add any actions you want when robot reaches destination
     }
     
@@ -65,7 +65,7 @@ public class RobotNavMeshMovement : MonoBehaviour
         startMoving = false;
         if (agent != null)
         {
-            agent.Stop();
+            agent.isStopped = true;
         }
     }
     

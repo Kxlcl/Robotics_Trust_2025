@@ -9,6 +9,7 @@ public class GlobalTimer : MonoBehaviour
     public float timeRemaining;
     private TextMeshProUGUI timerText; // Found dynamically in each scene
     public bool timerStarted = false;
+    private bool timeoutDataSubmitted = false; // Track if we already submitted timeout data
 
     void Awake()
     {
@@ -126,6 +127,17 @@ public class GlobalTimer : MonoBehaviour
         {
             if (timerText != null)
                 timerText.text = "00:00";
+
+            // Submit timeout data once
+            if (!timeoutDataSubmitted)
+            {
+                timeoutDataSubmitted = true;
+                if (DatabaseSubmitter.Instance != null)
+                {
+                    DatabaseSubmitter.Instance.OnTimeout();
+                    Debug.Log("Timer expired - data submitted to database");
+                }
+            }
         }
     }
 }

@@ -401,6 +401,7 @@ MonoBehaviour:
   dialoguePanel: {fileID: 1098651582}
   dialogueText: {fileID: 1547936598}
   textSpeed: 0.01
+  newPlayerPosition: {x: 170, y: 0, z: -95}
   backgroundAudioSource: {fileID: 760297974}
   newAudioClip: {fileID: 8300000, guid: c3a87c26a1b4d8044bcd62b1817dd684, type: 3}
 --- !u!1 &92196695 stripped
@@ -1687,6 +1688,52 @@ TerrainCollider:
   serializedVersion: 2
   m_TerrainData: {fileID: 0}
   m_EnableTreeColliders: 1
+--- !u!1 &472320196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 472320198}
+  - component: {fileID: 472320197}
+  m_Layer: 0
+  m_Name: DatabaseSubmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &472320197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472320196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488a1990293224d7fb6e4071c2a2748b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiUrl: http://localhost:3000/api/submit-session
+  logResponses: 1
+--- !u!4 &472320198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472320196}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 960, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &481456725 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8831514285420599863, guid: 94b7818c2aeef634f8a4270d3862c633, type: 3}
@@ -8043,6 +8090,9 @@ MonoBehaviour:
   gameStarted: 0
   movementEnabled: 1
   movementLocked: 0
+  allowUIInteraction: 0
+  isInWaitingScene: 0
+  waitingPosition: {x: 134, y: 0, z: -101}
   dialoguePrefab: {fileID: 8331994361790830585, guid: 190211df9877f4df9acb728ebfaa3ec1, type: 3}
 --- !u!143 &1759951701
 CharacterController:
@@ -10025,3 +10075,4 @@ SceneRoots:
   - {fileID: 1995692990}
   - {fileID: 1052049987}
   - {fileID: 1870632655}
+  - {fileID: 472320198}

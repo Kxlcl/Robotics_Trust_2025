@@ -27,11 +27,18 @@ public class GameOverManager : MonoBehaviour
     
     private System.Collections.IEnumerator DelayedSurveyRedirect()
     {
+        // Submit game data to database before redirecting
+        if (DatabaseSubmitter.Instance != null)
+        {
+            DatabaseSubmitter.Instance.OnGameOver();
+            Debug.Log("Game over data submitted to database");
+        }
+
         // Wait 3 seconds to let player read the game over message
         yield return new UnityEngine.WaitForSeconds(3f);
-        
+
         Debug.Log("Redirecting to survey after game over");
-        
+
 #if UNITY_WEBGL && !UNITY_EDITOR
         openSurveySameTab();
 #endif

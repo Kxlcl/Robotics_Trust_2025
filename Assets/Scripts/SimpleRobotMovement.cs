@@ -13,7 +13,8 @@ public class SimpleRobotMovement : MonoBehaviour
     
     private bool hasReachedTarget = false;
     private Vector3 startPosition;
-    
+    private GameObject tempTargetHolder; // Track temp GameObject to prevent memory leak
+
     void Start()
     {
         startPosition = transform.position;
@@ -90,10 +91,25 @@ public class SimpleRobotMovement : MonoBehaviour
     
     public void SetTarget(Vector3 newTargetPosition)
     {
+        // Clean up old temp target if it exists
+        if (tempTargetHolder != null)
+        {
+            Destroy(tempTargetHolder);
+        }
+
         // Create a temporary target position
-        GameObject tempTarget = new GameObject("TempTarget");
-        tempTarget.transform.position = newTargetPosition;
-        targetPosition = tempTarget.transform;
+        tempTargetHolder = new GameObject("TempTarget");
+        tempTargetHolder.transform.position = newTargetPosition;
+        targetPosition = tempTargetHolder.transform;
         hasReachedTarget = false;
+    }
+
+    void OnDestroy()
+    {
+        // Clean up temp target when this component is destroyed
+        if (tempTargetHolder != null)
+        {
+            Destroy(tempTargetHolder);
+        }
     }
 }
