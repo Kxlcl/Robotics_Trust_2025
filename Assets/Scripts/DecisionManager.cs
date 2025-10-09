@@ -12,6 +12,7 @@ public class DecisionManager : MonoBehaviour
     public List<DecisionOption> decisions = new List<DecisionOption>();
     public List<DecisionOption> yesNoDecisions = new List<DecisionOption>();
     public List<DecisionOption> workWaitDecisions = new List<DecisionOption>();
+    public List<DecisionOption> requestRobotDecisions = new List<DecisionOption>();
     
     private bool robotDecisionMade = false;
     private bool yesNoDecisionMade = false;
@@ -80,9 +81,13 @@ public class DecisionManager : MonoBehaviour
             DecisionOption selectedOption = currentOptions[optionIndex];
             awaitingKeyInput = false;
             currentOptions.Clear();
-            
+
             // Determine which type of decision this is based on the selected option
-            if (workWaitDecisions.Contains(selectedOption))
+            if (requestRobotDecisions.Contains(selectedOption))
+            {
+                OnRequestRobotDecisionMade(selectedOption.choiceId, selectedOption.choiceText, selectedOption.targetScene);
+            }
+            else if (workWaitDecisions.Contains(selectedOption))
             {
                 OnWorkWaitDecisionMade(selectedOption.choiceId, selectedOption.choiceText, selectedOption.targetScene);
             }
@@ -544,13 +549,13 @@ public class DecisionManager : MonoBehaviour
     public void OnWorkWaitDecisionMade(string choiceId, string choiceText, string targetScene)
     {
         Debug.Log($"OnWorkWaitDecisionMade called - Player chose: {choiceText} -> {targetScene}");
-        
+
         // Record the choice
         if (PlayerChoiceTracker.Instance != null)
         {
             PlayerChoiceTracker.Instance.RecordChoice(choiceId, choiceText, targetScene);
         }
-        
+
         // Hide decision buttons
         foreach (Button button in decisionButtons)
         {
@@ -561,19 +566,157 @@ public class DecisionManager : MonoBehaviour
             }
         }
         Debug.Log("All work/wait decision buttons hidden after choice made");
-        
+
         // Handle different choices
         if (choiceText.ToLower().Contains("ask") || choiceText.ToLower().Contains("work"))
         {
             // Player chose to ask about leaving for work
             Debug.Log("Player chose to ask about leaving for work");
-            // Add your logic here for what happens when they ask about work
+            ShowRobotResponseDialogue();
         }
         else
         {
             // Player chose to stay put and wait
             Debug.Log("Player chose to stay put and wait");
-            // Add your logic here for what happens when they wait
+            ShowWaitDialogue();
+        }
+    }
+
+    void ShowRobotResponseDialogue()
+    {
+        // Find DialogueManager and show the robot's response
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ShowRobotResponseDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found for robot response dialogue");
+        }
+    }
+
+    void ShowWaitDialogue()
+    {
+        // Find DialogueManager and show the wait dialogue
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ShowWaitDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found for wait dialogue");
+        }
+    }
+
+    public void ShowRequestRobotDecisions()
+    {
+        Debug.Log("ShowRequestRobotDecisions() called");
+
+        if (decisionPanel != null)
+        {
+            decisionPanel.SetActive(true);
+            SetupRequestRobotDisplay();
+
+            // Set up key input for request robot decisions
+            currentOptions.Clear();
+            currentOptions.AddRange(requestRobotDecisions);
+            awaitingKeyInput = true;
+
+            Debug.Log("Request Robot decision panel shown - Press Q or E to select");
+        }
+    }
+
+    void SetupRequestRobotDisplay()
+    {
+        Debug.Log($"SetupRequestRobotDisplay called - RequestRobotDecisions count: {requestRobotDecisions.Count}, DecisionButtons count: {decisionButtons.Count}");
+
+        // Make sure we have enough buttons for the request robot decisions
+        int decisionsCount = Mathf.Min(requestRobotDecisions.Count, decisionButtons.Count);
+
+        Debug.Log($"Will setup {decisionsCount} request robot options for key selection");
+
+        // Set up each button display for request robot decision
+        for (int i = 0; i < decisionsCount; i++)
+        {
+            DecisionOption option = requestRobotDecisions[i];
+            Button button = decisionButtons[i];
+
+            if (button != null)
+            {
+                // Show the button
+                button.gameObject.SetActive(true);
+
+                // Set button text with key indicator
+                Text buttonText = button.GetComponentInChildren<Text>();
+                string keyText = i == 0 ? "(Q) " : "(E) ";
+                string displayText = keyText + option.choiceText;
+
+                if (buttonText == null)
+                {
+                    // Try TextMeshPro if regular Text not found
+                    TMPro.TextMeshProUGUI tmpText = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (tmpText != null)
+                    {
+                        tmpText.text = displayText;
+                    }
+                }
+                else
+                {
+                    buttonText.text = displayText;
+                }
+
+                // Remove all click listeners since we're using keys
+                button.onClick.RemoveAllListeners();
+
+                Debug.Log($"Setup request robot option {i}: '{displayText}' - Press {(i == 0 ? "Q" : "E")} to select");
+            }
+        }
+
+        // Hide unused buttons
+        for (int i = decisionsCount; i < decisionButtons.Count; i++)
+        {
+            if (decisionButtons[i] != null)
+            {
+                decisionButtons[i].gameObject.SetActive(false);
+                Debug.Log($"Hiding unused request robot button {i}: {decisionButtons[i].name}");
+            }
+        }
+
+        Debug.Log($"Request Robot display setup complete. {decisionsCount} options shown. Press Q or E to select.");
+    }
+
+    public void OnRequestRobotDecisionMade(string choiceId, string choiceText, string targetScene)
+    {
+        Debug.Log($"OnRequestRobotDecisionMade called - Player chose: {choiceText} -> {targetScene}");
+
+        // Record the choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice(choiceId, choiceText, targetScene);
+        }
+
+        // Hide decision buttons
+        foreach (Button button in decisionButtons)
+        {
+            if (button != null)
+            {
+                button.gameObject.SetActive(false);
+                Debug.Log($"Hiding request robot button: {button.name}");
+            }
+        }
+        Debug.Log("All request robot decision buttons hidden after choice made");
+
+        // Show waiting for robot dialogue
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ShowWaitingForRobotDialogue();
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager not found for waiting for robot dialogue");
         }
     }
     

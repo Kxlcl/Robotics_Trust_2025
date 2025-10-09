@@ -8,6 +8,19 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;
     public TMPro.TMP_Text dialogueText;
     public float textSpeed = 0.05f;
+
+    [Header("Inline Decision Buttons")]
+    public GameObject inlineButtonContainer;
+    public UnityEngine.UI.Button inlineButton1;
+    public UnityEngine.UI.Button inlineButton2;
+    public TMPro.TMP_Text inlineButton1Text;
+    public TMPro.TMP_Text inlineButton2Text;
+    private CanvasGroup inlineButtonCanvasGroup;
+
+    [Header("Single Button")]
+    public GameObject singleButtonContainer;
+    public UnityEngine.UI.Button singleButton;
+    public TMPro.TMP_Text singleButtonText;
     
     [Header("Player Repositioning")]
     public Vector3 newPlayerPosition = new Vector3(170f, 0f, -95f);
@@ -19,17 +32,63 @@ public class DialogueManager : MonoBehaviour
     private string[] dialogueLines;
     private int currentLine = 0;
     private Coroutine typingCoroutine;
+    private bool inlineButtonsActive = false;
+    private bool singleButtonActive = false;
+    private System.Action currentOption1Callback;
+    private System.Action currentOption2Callback;
+    private System.Action currentSingleButtonCallback;
     
     void Start()
     {
+        // FIRST: Set flags to false BEFORE anything else
+        inlineButtonsActive = false;
+        singleButtonActive = false;
+        Debug.Log($"INITIAL FLAGS SET - inlineButtonsActive: {inlineButtonsActive}, singleButtonActive: {singleButtonActive}");
+
         LoadDialogue();
+
+        // Setup inline buttons with CanvasGroup for visibility control
+        if (inlineButtonContainer != null)
+        {
+            // Make sure container and children are active
+            inlineButtonContainer.SetActive(true);
+            if (inlineButton1 != null) inlineButton1.gameObject.SetActive(true);
+            if (inlineButton2 != null) inlineButton2.gameObject.SetActive(true);
+
+            // Get or add CanvasGroup component for visibility control
+            inlineButtonCanvasGroup = inlineButtonContainer.GetComponent<CanvasGroup>();
+            if (inlineButtonCanvasGroup == null)
+            {
+                inlineButtonCanvasGroup = inlineButtonContainer.AddComponent<CanvasGroup>();
+                Debug.Log("Added CanvasGroup to InlineButtonContainer");
+            }
+
+            // TEMP: Don't hide buttons - leave them visible for testing
+            inlineButtonCanvasGroup.alpha = 1f;
+            inlineButtonCanvasGroup.interactable = true;
+            inlineButtonCanvasGroup.blocksRaycasts = true;
+            Debug.Log("TEMP: Inline button container LEFT VISIBLE for testing");
+        }
+
+        if (singleButtonContainer != null)
+        {
+            if (singleButton != null) singleButton.gameObject.SetActive(true);
+            singleButtonContainer.SetActive(false);
+            Debug.Log("Single button container initialized and hidden");
+        }
+
+        Debug.Log($"After button setup - inlineButtonsActive: {inlineButtonsActive}");
+
         // Canvas stays active - dialogue panel will just show empty text if no content
-        
+
         // Check if we're in ID_Scene and show appropriate dialogue
         string currentScene = SceneManager.GetActiveScene().name;
+        Debug.Log($"Current scene: {currentScene}");
+
         if (currentScene == "ID_Scene")
         {
             ShowIDSceneDialogue();
+            Debug.Log($"After ShowIDSceneDialogue - inlineButtonsActive: {inlineButtonsActive}");
         }
         else if (currentScene == "Waiting_Scene")
         {
@@ -52,15 +111,44 @@ public class DialogueManager : MonoBehaviour
             Debug.Log($"DialogueManager disabled in {currentScene}");
         }
     }
+
+    void Update()
+    {
+        // Handle keyboard input for inline buttons
+        if (inlineButtonsActive)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                currentOption1Callback?.Invoke();
+                HideInlineButtons();
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                currentOption2Callback?.Invoke();
+                HideInlineButtons();
+            }
+        }
+
+        // Handle keyboard input for single button
+        if (singleButtonActive)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                currentSingleButtonCallback?.Invoke();
+                HideSingleButton();
+            }
+        }
+    }
     
     void ShowIDSceneDialogue()
     {
         dialoguePanel.SetActive(true);
         dialogueText.text = "Choose a robot to follow.";
         Debug.Log("Showing ID_Scene dialogue: Choose a robot to follow");
-        
-        // Trigger decision system after a delay
-        StartCoroutine(TriggerDecisionAfterDelay());
+
+        // NOTE: No longer auto-triggering DecisionManager Q/E buttons
+        // Players now use the crosshair hover + E interaction system instead
+        // The single button will appear when they press E while looking at a robot
     }
     
     System.Collections.IEnumerator TriggerDecisionAfterDelay()
@@ -250,9 +338,82 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("Showing waiting scene dialogue");
         dialoguePanel.SetActive(true);
         dialogueText.text = "I really need to get to work...";
-        
+
         // Trigger work/wait decision after a delay
         StartCoroutine(TriggerWorkWaitDecisionAfterDelay());
+    }
+
+    public void ShowRobotResponseDialogue()
+    {
+        Debug.Log("Showing robot response dialogue");
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Apologies, we must follow procedure for your safety and others. Rest assured, we will get you to your destination as soon as possible.";
+
+        // After showing the robot's response, trigger the option to request another robot
+        StartCoroutine(TriggerRequestAnotherRobotDecision());
+    }
+
+    System.Collections.IEnumerator TriggerRequestAnotherRobotDecision()
+    {
+        // Wait for player to read the robot's response
+        yield return new WaitForSeconds(5f);
+
+        // Show that another robot is available
+        dialogueText.text = "Another robot is available to assist you.";
+        Debug.Log("Showing 'another robot available' message");
+
+        // Wait a moment, then ask which robot they want
+        yield return new WaitForSeconds(3f);
+
+        dialogueText.text = "Which robot would you like to ask for help?";
+        Debug.Log("Asking which robot to request");
+
+        // Show inline buttons for robot selection
+        yield return new WaitForSeconds(1f);
+        ShowInlineRequestRobotButtons();
+    }
+
+    public void ShowWaitDialogue()
+    {
+        Debug.Log("Showing wait dialogue");
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Nevermind, I'll just wait..";
+
+        // Hide dialogue after 1 minute (60 seconds)
+        StartCoroutine(HideDialogueAfterOneMinute());
+    }
+
+    System.Collections.IEnumerator HideDialogueAfterOneMinute()
+    {
+        yield return new WaitForSeconds(60f);
+
+        dialoguePanel.SetActive(false);
+        Debug.Log("Wait dialogue hidden after 1 minute");
+    }
+
+    public void ShowWaitingForRobotDialogue()
+    {
+        Debug.Log("Showing waiting for robot dialogue");
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Waiting for robot to return...";
+
+        // After a delay, show the new robot's response
+        StartCoroutine(ShowNewRobotResponse());
+    }
+
+    System.Collections.IEnumerator ShowNewRobotResponse()
+    {
+        // Wait for a few seconds to simulate robot arrival
+        yield return new WaitForSeconds(5f);
+
+        // Show the new robot's apology message
+        dialogueText.text = "Apologies, we must follow procedure for your safety and others. Rest assured, we will get you to your destination as soon as possible.";
+        Debug.Log("New robot arrived with response");
+
+        // Hide dialogue after a delay
+        yield return new WaitForSeconds(5f);
+        dialoguePanel.SetActive(false);
+        Debug.Log("New robot dialogue hidden");
     }
     
     System.Collections.IEnumerator TriggerWorkWaitDecisionAfterDelay()
@@ -260,19 +421,11 @@ public class DialogueManager : MonoBehaviour
         // Wait a few seconds for player to read the text
         Debug.Log("Starting delay before showing work/wait decisions");
         yield return new WaitForSeconds(3f);
-        
-        Debug.Log("Triggering work/wait decision options");
-        
-        // Find and trigger decision manager for work/wait options
-        DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
-        if (decisionManager != null)
-        {
-            decisionManager.ShowWorkWaitDecisions();
-        }
-        else
-        {
-            Debug.LogWarning("DecisionManager not found for work/wait options");
-        }
+
+        Debug.Log("Showing inline work/wait decision buttons");
+
+        // Show inline buttons instead of using DecisionManager
+        ShowInlineWorkWaitButtons();
     }
     
     public void StartDialogue()
@@ -432,5 +585,405 @@ public class DialogueManager : MonoBehaviour
             backgroundAudioSource.loop = false; // Ensure it doesn't loop
             backgroundAudioSource.Play();
         }
+    }
+
+    // Helper methods for inline buttons
+    public void ShowInlineButtons(string option1Text, string option2Text, System.Action onOption1, System.Action onOption2)
+    {
+        Debug.Log($"ShowInlineButtons called: Q={option1Text}, E={option2Text}");
+
+        if (inlineButtonContainer == null)
+        {
+            Debug.LogError("inlineButtonContainer is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        if (inlineButton1 == null)
+        {
+            Debug.LogError("inlineButton1 is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        if (inlineButton2 == null)
+        {
+            Debug.LogError("inlineButton2 is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        if (inlineButton1Text == null)
+        {
+            Debug.LogError("inlineButton1Text is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        if (inlineButton2Text == null)
+        {
+            Debug.LogError("inlineButton2Text is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        Debug.Log("SHOWING inline buttons via CanvasGroup");
+
+        // Show buttons using CanvasGroup
+        if (inlineButtonCanvasGroup != null)
+        {
+            Debug.Log($"CanvasGroup found - setting alpha to 1 (was: {inlineButtonCanvasGroup.alpha})");
+            inlineButtonCanvasGroup.alpha = 1f;
+            inlineButtonCanvasGroup.interactable = true;
+            inlineButtonCanvasGroup.blocksRaycasts = true;
+            Debug.Log($"CanvasGroup alpha is now: {inlineButtonCanvasGroup.alpha}");
+        }
+        else
+        {
+            Debug.LogError("CanvasGroup is NULL! Using fallback SetActive");
+            // Fallback if no CanvasGroup
+            inlineButtonContainer.SetActive(true);
+        }
+
+        Debug.Log("SETTING inlineButtonsActive = true");
+        inlineButtonsActive = true;
+        Debug.Log($"inlineButtonsActive is now: {inlineButtonsActive}");
+
+        // Store callbacks for keyboard input
+        currentOption1Callback = onOption1;
+        currentOption2Callback = onOption2;
+
+        // Set button texts
+        inlineButton1Text.text = $"(Q) {option1Text}";
+        inlineButton2Text.text = $"(E) {option2Text}";
+        Debug.Log($"Button texts set - Q: {inlineButton1Text.text}, E: {inlineButton2Text.text}");
+
+        // Remove old listeners and add new ones
+        inlineButton1.onClick.RemoveAllListeners();
+        inlineButton1.onClick.AddListener(() => {
+            Debug.Log("Q button clicked!");
+            onOption1?.Invoke();
+            HideInlineButtons();
+        });
+
+        inlineButton2.onClick.RemoveAllListeners();
+        inlineButton2.onClick.AddListener(() => {
+            Debug.Log("E button clicked!");
+            onOption2?.Invoke();
+            HideInlineButtons();
+        });
+
+        Debug.Log($"Inline buttons shown successfully! Container active: {inlineButtonContainer.activeSelf}");
+        Debug.Log($"Button1 active: {inlineButton1.gameObject.activeSelf}");
+        Debug.Log($"Button2 active: {inlineButton2.gameObject.activeSelf}");
+        Debug.Log($"Button1 position: {inlineButton1.transform.position}");
+        Debug.Log($"Button2 position: {inlineButton2.transform.position}");
+        Debug.Log($"Container position: {inlineButtonContainer.transform.position}");
+
+        // Check RectTransform
+        RectTransform containerRect = inlineButtonContainer.GetComponent<RectTransform>();
+        if (containerRect != null)
+        {
+            Debug.Log($"Container RectTransform - Width: {containerRect.rect.width}, Height: {containerRect.rect.height}");
+            Debug.Log($"Container anchored position: {containerRect.anchoredPosition}");
+        }
+
+        RectTransform button1Rect = inlineButton1.GetComponent<RectTransform>();
+        if (button1Rect != null)
+        {
+            Debug.Log($"Button1 RectTransform - Width: {button1Rect.rect.width}, Height: {button1Rect.rect.height}");
+            Debug.Log($"Button1 anchored position: {button1Rect.anchoredPosition}");
+        }
+
+        RectTransform button2Rect = inlineButton2.GetComponent<RectTransform>();
+        if (button2Rect != null)
+        {
+            Debug.Log($"Button2 RectTransform - Width: {button2Rect.rect.width}, Height: {button2Rect.rect.height}");
+            Debug.Log($"Button2 anchored position: {button2Rect.anchoredPosition}");
+        }
+
+        // Check if dialogue panel might be blocking
+        if (dialoguePanel != null)
+        {
+            Debug.Log($"DialoguePanel active: {dialoguePanel.activeSelf}");
+            Canvas canvas = dialoguePanel.GetComponentInParent<Canvas>();
+            if (canvas != null)
+            {
+                Debug.Log($"Canvas render mode: {canvas.renderMode}");
+                Debug.Log($"Canvas sort order: {canvas.sortingOrder}");
+            }
+        }
+
+        // Make sure buttons are enabled
+        inlineButton1.gameObject.SetActive(true);
+        inlineButton2.gameObject.SetActive(true);
+
+        // Force button colors to be visible
+        UnityEngine.UI.Image button1Image = inlineButton1.GetComponent<UnityEngine.UI.Image>();
+        if (button1Image != null)
+        {
+            Color col = button1Image.color;
+            col.a = 1f; // Full opacity
+            button1Image.color = col;
+            Debug.Log($"Button1 Image color: {button1Image.color}");
+        }
+
+        UnityEngine.UI.Image button2Image = inlineButton2.GetComponent<UnityEngine.UI.Image>();
+        if (button2Image != null)
+        {
+            Color col = button2Image.color;
+            col.a = 1f; // Full opacity
+            button2Image.color = col;
+            Debug.Log($"Button2 Image color: {button2Image.color}");
+        }
+
+        // Force text colors to be visible
+        if (inlineButton1Text != null)
+        {
+            Color textCol = inlineButton1Text.color;
+            textCol.a = 1f;
+            inlineButton1Text.color = textCol;
+            Debug.Log($"Button1 Text color: {inlineButton1Text.color}");
+        }
+
+        if (inlineButton2Text != null)
+        {
+            Color textCol = inlineButton2Text.color;
+            textCol.a = 1f;
+            inlineButton2Text.color = textCol;
+            Debug.Log($"Button2 Text color: {inlineButton2Text.color}");
+        }
+
+        Debug.Log($"After force activate - Button1: {inlineButton1.gameObject.activeSelf}, Button2: {inlineButton2.gameObject.activeSelf}");
+    }
+
+    public void HideInlineButtons()
+    {
+        Debug.Log("HIDING inline buttons via CanvasGroup");
+
+        // Hide buttons using CanvasGroup
+        if (inlineButtonCanvasGroup != null)
+        {
+            inlineButtonCanvasGroup.alpha = 0f;
+            inlineButtonCanvasGroup.interactable = false;
+            inlineButtonCanvasGroup.blocksRaycasts = false;
+        }
+        else if (inlineButtonContainer != null)
+        {
+            // Fallback if no CanvasGroup
+            inlineButtonContainer.SetActive(false);
+        }
+
+        inlineButtonsActive = false;
+        currentOption1Callback = null;
+        currentOption2Callback = null;
+    }
+
+    // Public method to check if inline buttons are currently active
+    public bool AreInlineButtonsActive()
+    {
+        Debug.Log($"AreInlineButtonsActive() called - returning: {inlineButtonsActive}");
+        return inlineButtonsActive;
+    }
+
+    // Single button methods
+    public void ShowSingleButton(string buttonText, System.Action onButtonClick)
+    {
+        Debug.Log($"ShowSingleButton called with text: {buttonText}");
+
+        if (singleButtonContainer == null)
+        {
+            Debug.LogError("singleButtonContainer is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        if (singleButton == null)
+        {
+            Debug.LogError("singleButton is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        if (singleButtonText == null)
+        {
+            Debug.LogError("singleButtonText is NULL! Did you assign it in Inspector?");
+            return;
+        }
+
+        singleButtonContainer.SetActive(true);
+        singleButtonActive = true;
+
+        // Store callback for keyboard input
+        currentSingleButtonCallback = onButtonClick;
+
+        // Set button text
+        singleButtonText.text = $"(E) {buttonText}";
+        Debug.Log($"Button text set to: {singleButtonText.text}");
+
+        // Remove old listeners and add new one
+        singleButton.onClick.RemoveAllListeners();
+        singleButton.onClick.AddListener(() => {
+            Debug.Log("Single button clicked!");
+            onButtonClick?.Invoke();
+            HideSingleButton();
+        });
+
+        Debug.Log($"Single button shown successfully! Container active: {singleButtonContainer.activeSelf}");
+    }
+
+    public void HideSingleButton()
+    {
+        if (singleButtonContainer != null)
+        {
+            singleButtonContainer.SetActive(false);
+        }
+
+        singleButtonActive = false;
+        currentSingleButtonCallback = null;
+    }
+
+    // Update existing methods to use inline buttons
+    public void ShowInlineWorkWaitButtons()
+    {
+        ShowInlineButtons(
+            "Ask about leaving for work",
+            "Stay put and wait",
+            OnAskAboutWork,
+            OnStayAndWait
+        );
+    }
+
+    public void ShowInlineRequestRobotButtons()
+    {
+        ShowInlineButtons(
+            "Request Robot A",
+            "Request Robot B",
+            OnRequestRobotA,
+            OnRequestRobotB
+        );
+    }
+
+    // Method for robot interaction in ID_Scene
+    public void ShowRobotInteractionButton(string robotName)
+    {
+        Debug.Log($"=== ShowRobotInteractionButton called for: {robotName} ===");
+
+        // Show dialogue with robot info
+        dialoguePanel.SetActive(true);
+        dialogueText.text = $"Would you like to follow this robot?";
+        Debug.Log($"Dialogue panel active: {dialoguePanel.activeSelf}");
+        Debug.Log($"Dialogue text set to: {dialogueText.text}");
+
+        // Make sure dialogue panel isn't clipping the buttons
+        RectTransform dialoguePanelRect = dialoguePanel.GetComponent<RectTransform>();
+        if (dialoguePanelRect != null)
+        {
+            Debug.Log($"DialoguePanel size: {dialoguePanelRect.rect.width} x {dialoguePanelRect.rect.height}");
+        }
+
+        // Show Yes/No buttons
+        Debug.Log("Calling ShowInlineButtons for Yes/No...");
+        ShowInlineButtons("Yes", "No",
+            () => OnFollowRobotYes(robotName),
+            () => OnFollowRobotNo(robotName));
+    }
+
+    private void OnFollowRobotYes(string robotName)
+    {
+        Debug.Log($"Player chose YES to follow robot: {robotName}");
+
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("robot_follow_yes", $"Follow {robotName}", "");
+        }
+
+        // Show ID verification dialogue
+        ShowIDVerificationDialogue();
+    }
+
+    private void OnFollowRobotNo(string robotName)
+    {
+        Debug.Log($"Player chose NO to follow robot: {robotName}");
+
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("robot_follow_no", $"Declined {robotName}", "");
+        }
+
+        // Hide dialogue and reset so they can choose another robot
+        HideInlineButtons();
+        dialoguePanel.SetActive(false);
+
+        // Reset the interaction in RobotInteraction script
+        RobotInteraction robotInteraction = FindObjectOfType<RobotInteraction>();
+        if (robotInteraction != null)
+        {
+            robotInteraction.ResetInteraction();
+        }
+
+        // Show message that they can choose another robot
+        StartCoroutine(ShowChooseAnotherRobotMessage());
+    }
+
+    System.Collections.IEnumerator ShowChooseAnotherRobotMessage()
+    {
+        yield return new WaitForSeconds(0.5f);
+        dialoguePanel.SetActive(true);
+        dialogueText.text = "Choose a robot to follow.";
+    }
+
+    private void OnFollowRobot(string robotName)
+    {
+        Debug.Log($"Player chose to follow robot: {robotName}");
+
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("robot_follow", $"Follow {robotName}", "");
+        }
+
+        // Show ID verification dialogue
+        ShowIDVerificationDialogue();
+    }
+
+    // Callback methods
+    private void OnAskAboutWork()
+    {
+        Debug.Log("Player chose to ask about work");
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("work_ask", "Ask about leaving for work", "");
+        }
+        ShowRobotResponseDialogue();
+    }
+
+    private void OnStayAndWait()
+    {
+        Debug.Log("Player chose to stay and wait");
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("work_wait", "Stay put and wait", "");
+        }
+        ShowWaitDialogue();
+    }
+
+    private void OnRequestRobotA()
+    {
+        Debug.Log("Player requested Robot A");
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("robot_a", "Request Robot A", "");
+        }
+        ShowWaitingForRobotDialogue();
+    }
+
+    private void OnRequestRobotB()
+    {
+        Debug.Log("Player requested Robot B");
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
+        {
+            PlayerChoiceTracker.Instance.RecordChoice("robot_b", "Request Robot B", "");
+        }
+        ShowWaitingForRobotDialogue();
     }
 }
