@@ -268,7 +268,7 @@ public class DialogueManager : MonoBehaviour
 
     System.Collections.IEnumerator ContinueAfterIDProvided()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
 
         Debug.Log("Transitioning to Waiting_Scene after ID provided");
         dialoguePanel.SetActive(false);

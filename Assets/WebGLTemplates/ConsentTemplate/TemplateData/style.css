@@ -1,0 +1,344 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Consent Form Styles */
+#consent-container {
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+#consent-form {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#consent-form h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 15px;
+    line-height: 1.4;
+}
+
+#consent-form h2 {
+    color: #667eea;
+    font-size: 22px;
+    margin-bottom: 15px;
+    margin-top: 20px;
+}
+
+#consent-form h3 {
+    color: #555;
+    font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 25px;
+}
+
+#consent-content {
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+#consent-content p {
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+#consent-content ul {
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+#consent-content li {
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+#consent-checkbox-container {
+    background: #f8f9fa;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+#consent-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+#consent-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Header Info Section */
+#consent-header-info {
+    background: #f0f4ff;
+    border-left: 4px solid #667eea;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+}
+
+#consent-header-info p {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.6;
+}
+
+#consent-header-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Consent Statements Section */
+#consent-statements {
+    margin-top: 30px;
+    border-top: 2px solid #e0e0e0;
+    padding-top: 30px;
+}
+
+#consent-statements h3 {
+    color: #667eea;
+    font-size: 18px;
+    margin-bottom: 15px;
+    margin-top: 20px;
+}
+
+#consent-statements p {
+    margin-bottom: 15px;
+    font-size: 15px;
+    color: #444;
+}
+
+/* Future Use Options */
+#future-use-options {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.future-use-option {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #444;
+}
+
+.future-use-option:last-child {
+    margin-bottom: 0;
+}
+
+.future-use-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.future-use-option span {
+    line-height: 1.5;
+}
+
+/* Email links */
+a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#start-button {
+    width: 100%;
+    padding: 15px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#start-button:hover:not(:disabled) {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+#start-button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Unity Container Styles */
+#unity-container {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #231F20;
+}
+
+#unity-container.unity-desktop {
+    width: 100%;
+    height: 100%;
+}
+
+#unity-canvas {
+    width: 100%;
+    height: 100%;
+    background: #231F20;
+}
+
+#unity-loading-bar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+#unity-logo {
+    width: 154px;
+    height: 130px;
+    background: url('unity-logo-dark.png') no-repeat center;
+}
+
+#unity-progress-bar-empty {
+    width: 141px;
+    height: 18px;
+    margin-top: 10px;
+    background: url('progress-bar-empty-dark.png') no-repeat center;
+}
+
+#unity-progress-bar-full {
+    width: 0%;
+    height: 18px;
+    margin-top: 10px;
+    background: url('progress-bar-full-dark.png') no-repeat center;
+}
+
+#unity-warning {
+    position: absolute;
+    left: 50%;
+    top: 5%;
+    transform: translate(-50%);
+    background: white;
+    padding: 10px;
+    display: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+/* Scrollbar Styling */
+#consent-form::-webkit-scrollbar {
+    width: 10px;
+}
+
+#consent-form::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#consent-form::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+#consent-form::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #consent-form {
+        padding: 25px;
+    }
+
+    #consent-form h1 {
+        font-size: 24px;
+    }
+
+    #consent-form h2 {
+        font-size: 20px;
+    }
+
+    #consent-form h3 {
+        font-size: 16px;
+    }
+
+    #consent-content p,
+    #consent-content li {
+        font-size: 14px;
+    }
+
+    #start-button {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
