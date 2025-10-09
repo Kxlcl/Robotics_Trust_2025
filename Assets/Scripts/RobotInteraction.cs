@@ -236,15 +236,26 @@ public class RobotInteraction : MonoBehaviour
                 currentRobotInView = null;
                 HideInteractionPrompt();
 
-                // Also hide the dialogue single button if it's showing
-                if (dialogueManager != null && hasInteracted)
+                // Also hide the dialogue buttons if they're showing
+                if (dialogueManager != null)
                 {
+                    // Hide inline buttons
+                    if (dialogueManager.AreInlineButtonsActive())
+                    {
+                        dialogueManager.HideInlineButtons();
+                        Debug.Log("Player looked away - hiding inline buttons");
+                    }
+
+                    // Hide single button (if any)
                     dialogueManager.HideSingleButton();
+
+                    // Hide dialogue panel
                     dialogueManager.dialoguePanel.SetActive(false);
-                    // Reset interaction so player can interact with another robot
-                    hasInteracted = false;
-                    Debug.Log("Player looked away from robot - hiding dialogue and resetting interaction");
                 }
+
+                // Reset interaction so player can interact with another robot
+                hasInteracted = false;
+                Debug.Log("Player looked away from robot - resetting interaction");
             }
         }
     }

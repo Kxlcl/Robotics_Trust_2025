@@ -63,11 +63,11 @@ public class DialogueManager : MonoBehaviour
                 Debug.Log("Added CanvasGroup to InlineButtonContainer");
             }
 
-            // TEMP: Don't hide buttons - leave them visible for testing
-            inlineButtonCanvasGroup.alpha = 1f;
-            inlineButtonCanvasGroup.interactable = true;
-            inlineButtonCanvasGroup.blocksRaycasts = true;
-            Debug.Log("TEMP: Inline button container LEFT VISIBLE for testing");
+            // Hide buttons initially using CanvasGroup
+            inlineButtonCanvasGroup.alpha = 0f;
+            inlineButtonCanvasGroup.interactable = false;
+            inlineButtonCanvasGroup.blocksRaycasts = false;
+            Debug.Log($"Inline buttons hidden via CanvasGroup - alpha set to {inlineButtonCanvasGroup.alpha}");
         }
 
         if (singleButtonContainer != null)
@@ -114,18 +114,40 @@ public class DialogueManager : MonoBehaviour
 
     void Update()
     {
+        // Debug: Show status every frame when buttons should be active
+        if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log($"Key pressed - inlineButtonsActive: {inlineButtonsActive}, singleButtonActive: {singleButtonActive}");
+        }
+
         // Handle keyboard input for inline buttons
         if (inlineButtonsActive)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                currentOption1Callback?.Invoke();
-                HideInlineButtons();
+                Debug.Log("Q pressed - invoking option 1 callback");
+                if (currentOption1Callback != null)
+                {
+                    currentOption1Callback.Invoke();
+                    HideInlineButtons();
+                }
+                else
+                {
+                    Debug.LogError("currentOption1Callback is NULL!");
+                }
             }
             else if (Input.GetKeyDown(KeyCode.E))
             {
-                currentOption2Callback?.Invoke();
-                HideInlineButtons();
+                Debug.Log("E pressed - invoking option 2 callback");
+                if (currentOption2Callback != null)
+                {
+                    currentOption2Callback.Invoke();
+                    HideInlineButtons();
+                }
+                else
+                {
+                    Debug.LogError("currentOption2Callback is NULL!");
+                }
             }
         }
 
@@ -134,8 +156,16 @@ public class DialogueManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                currentSingleButtonCallback?.Invoke();
-                HideSingleButton();
+                Debug.Log("E pressed - invoking single button callback");
+                if (currentSingleButtonCallback != null)
+                {
+                    currentSingleButtonCallback.Invoke();
+                    HideSingleButton();
+                }
+                else
+                {
+                    Debug.LogError("currentSingleButtonCallback is NULL!");
+                }
             }
         }
     }
@@ -187,19 +217,93 @@ public class DialogueManager : MonoBehaviour
         // Wait a few seconds for player to read the ID verification text
         Debug.Log("Starting delay before showing yes/no decisions");
         yield return new WaitForSeconds(4f);
-        
-        Debug.Log("Triggering yes/no decision options");
-        
-        // Find and trigger decision manager for yes/no options
-        DecisionManager decisionManager = FindObjectOfType<DecisionManager>();
-        if (decisionManager != null)
+
+        Debug.Log("Showing inline Yes/No buttons for ID verification");
+
+        // Show inline Yes/No buttons instead of old DecisionManager system
+        ShowInlineButtons("Yes", "No",
+            OnIDVerificationYes,
+            OnIDVerificationNo);
+    }
+
+    private void OnIDVerificationYes()
+    {
+        Debug.Log("Player chose YES to provide ID");
+
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
         {
-            decisionManager.ShowYesNoDecisions();
+            PlayerChoiceTracker.Instance.RecordChoice("id_yes", "Provide ID", "");
         }
-        else
+
+        // Continue with the story - show next dialogue
+        ShowIDProvidedDialogue();
+    }
+
+    private void OnIDVerificationNo()
+    {
+        Debug.Log("Player chose NO to provide ID");
+
+        // Record choice
+        if (PlayerChoiceTracker.Instance != null)
         {
-            Debug.LogWarning("DecisionManager not found for yes/no options");
+            PlayerChoiceTracker.Instance.RecordChoice("id_no", "Refuse ID", "");
         }
+
+        // Show consequence of refusing ID
+        ShowIDRefusedDialogue();
+    }
+
+    void ShowIDProvidedDialogue()
+    {
+        dialogueText.text = "Thank you for your cooperation. Please follow me and the other passengers in my group to be escorted to a safe area.";
+        Debug.Log("Showing ID provided dialogue");
+
+        // Hide buttons after showing response
+        HideInlineButtons();
+
+        // After a delay, continue to next scene or dialogue
+        StartCoroutine(ContinueAfterIDProvided());
+    }
+
+    System.Collections.IEnumerator ContinueAfterIDProvided()
+    {
+        yield return new WaitForSeconds(5f);
+
+        Debug.Log("Transitioning to Waiting_Scene after ID provided");
+        dialoguePanel.SetActive(false);
+
+        // Transition to Waiting_Scene
+        SceneManager.LoadScene("Waiting_Scene");
+    }
+
+    void ShowIDRefusedDialogue()
+    {
+        dialogueText.text = "You are being temporarily detained for questioning due to suspicious behavior.";
+        Debug.Log("Showing ID refused dialogue");
+
+        // Hide buttons after showing response
+        HideInlineButtons();
+
+        // After a delay, show consequence
+        StartCoroutine(ContinueAfterIDRefused());
+    }
+
+    System.Collections.IEnumerator ContinueAfterIDRefused()
+    {
+        yield return new WaitForSeconds(5f);
+
+        Debug.Log("ID refused - showing detention consequence");
+
+        // For now, show a final message before ending
+        // TODO: Create and transition to Detention_Scene when available
+        dialogueText.text = "You have been taken to a secure holding area. Your journey ends here.";
+
+        yield return new WaitForSeconds(5f);
+
+        // Return to Start_Scene or end the game
+        Debug.Log("Returning to Start_Scene after detention");
+        SceneManager.LoadScene("Start_Scene");
     }
     
     public void ShowFollowDialogue()
@@ -647,6 +751,7 @@ public class DialogueManager : MonoBehaviour
         // Store callbacks for keyboard input
         currentOption1Callback = onOption1;
         currentOption2Callback = onOption2;
+        Debug.Log($"Callbacks stored - Option1: {currentOption1Callback != null}, Option2: {currentOption2Callback != null}");
 
         // Set button texts
         inlineButton1Text.text = $"(Q) {option1Text}";
