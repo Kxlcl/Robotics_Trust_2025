@@ -542,7 +542,7 @@ public class DialogueManager : MonoBehaviour
     void LoadDialogue()
     {
         // Try to load from file first
-        TextAsset dialogueFile = Resources.Load<TextAsset>("SimulationDialogue");
+        TextAsset dialogueFile = Resources.Load<TextAsset>("Text/SimulationDialogue");
         
         if (dialogueFile != null)
         {
@@ -633,7 +633,7 @@ public class DialogueManager : MonoBehaviour
     void ShowAnnouncementText()
     {
         // Load announcement text from line 10
-        TextAsset dialogueFile = Resources.Load<TextAsset>("SimulationDialogue");
+        TextAsset dialogueFile = Resources.Load<TextAsset>("Text/SimulationDialogue");
         
         if (dialogueFile != null)
         {
