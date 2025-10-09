@@ -214,14 +214,16 @@ public class RobotInteraction : MonoBehaviour
                     Debug.Log($">>> ROBOT DETECTED: {currentRobotInView.name}");
                 }
 
-                // Only show interaction prompt if buttons are not active
-                if (dialogueManager == null || !dialogueManager.AreInlineButtonsActive())
+                // Only show interaction prompt if:
+                // 1. Haven't already interacted with this robot
+                // 2. Buttons are not currently active
+                if (!hasInteracted && (dialogueManager == null || !dialogueManager.AreInlineButtonsActive()))
                 {
                     ShowInteractionPrompt();
                 }
                 else
                 {
-                    // Buttons are showing, hide the "(E) Interact" prompt
+                    // Either already interacted or buttons are showing - hide the "(E) Interact" prompt
                     HideInteractionPrompt();
                 }
             }
